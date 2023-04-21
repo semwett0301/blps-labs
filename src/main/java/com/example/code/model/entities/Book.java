@@ -31,6 +31,10 @@ public class Book extends BaseEntity{
     @Column(name = "available_amount", nullable = false)
     private int availableAmount;
 
-    @OneToMany(mappedBy = "reservationInfo.reservedBook")
+    @OneToMany(mappedBy = "reservedBook")
     private List<Reservation> reservations;
+
+    public boolean isAvailable(int requestedAmount) {
+        return availableAmount > requestedAmount;
+    }
 }

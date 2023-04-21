@@ -1,29 +1,27 @@
 package com.example.code.model.entities;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reservation {
-    @EmbeddedId
-    private ReservationId reservationInfo;
-}
+public class Reservation extends BaseEntity {
 
-class ReservationId implements Serializable {
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Book reservedBook;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private User user;
 }

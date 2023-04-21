@@ -24,6 +24,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "reservationInfo.user")
+    @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
 }
