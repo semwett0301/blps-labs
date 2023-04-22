@@ -1,13 +1,15 @@
 package com.example.code.services.WarehouseService;
 
-import com.example.code.model.dto.RequestReservedBook;
 import com.example.code.model.dto.ResponseAvailableBook;
+import com.example.code.model.dto.ResponseCreateOrder;
 import com.example.code.model.entities.Book;
+import com.example.code.model.entities.Order;
 import com.example.code.model.entities.Reservation;
 import com.example.code.model.entities.User;
 import com.example.code.model.exceptions.BookIsNotAvailableException;
 import com.example.code.model.exceptions.UserNotFoundException;
 import com.example.code.model.mappers.BookMapper;
+import com.example.code.model.modelUtils.ReservedBook;
 import com.example.code.repositories.BookRepository;
 import com.example.code.repositories.ReservationRepository;
 import com.example.code.repositories.UserRepository;
@@ -26,13 +28,11 @@ import java.util.stream.Collectors;
 public class WarehouseServiceLitRes implements WarehouseService {
 
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
 
     @Autowired
     public WarehouseServiceLitRes(BookRepository bookRepository, UserRepository userRepository, ReservationRepository reservationRepository) {
         this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
     }
 
@@ -45,17 +45,14 @@ public class WarehouseServiceLitRes implements WarehouseService {
     }
 
     @Override
-    public void reserveBooks(List<RequestReservedBook> reservedBookList) throws UserNotFoundException, BookIsNotAvailableException {
-        final UUID userId = UUID.fromString("48f68268-656c-49ff-a220-df39bb9f8241");
-
-        User user = getUserById(userId);
-        List<BookReservation> bookReservations = createBookReservationList(reservedBookList);
+    public void reserveBooks(List<ReservedBook> reservedBook, Order order) throws UserNotFoundException, BookIsNotAvailableException {
+        List<BookReservation> bookReservations = createBookReservationList(reservedBook);
         decreaseAvailableAmountOfBooks(bookReservations);
-        createReservations(bookReservations, user);
+        createReservations(bookReservations, order);
         updateBooks(bookReservations);
     }
 
-    private List<BookReservation> createBookReservationList(List<RequestReservedBook> requestReservedBooks) throws BookIsNotAvailableException {
+    private List<BookReservation> createBookReservationList(List<ReservedBook> requestReservedBooks) throws BookIsNotAvailableException {
         List<BookReservation> bookReservations = new ArrayList<>();
         List<Book> books = getRequestedBooks(requestReservedBooks);
 
@@ -77,11 +74,11 @@ public class WarehouseServiceLitRes implements WarehouseService {
                 .collect(Collectors.toList()));
     }
 
-    private void createReservations(List<BookReservation> bookReservations, User user) {
+    private void createReservations(List<BookReservation> bookReservations, Order order) {
         List<Reservation> reservations = new ArrayList<>();
         bookReservations.forEach(bookReservation -> {
             for (int i = 0; i < bookReservation.getRequestedAmount(); i++) {
-                reservations.add(new Reservation(bookReservation.getBook(), user));
+                reservations.add(new Reservation(bookReservation.getBook(), order));
             }
         });
         reservationRepository.saveAll(reservations);
@@ -94,8 +91,8 @@ public class WarehouseServiceLitRes implements WarehouseService {
         });
     }
 
-    private List<Book> getRequestedBooks(List<RequestReservedBook> reservedBookList) throws BookIsNotAvailableException {
-        List<Book> books = getBooksByIds(reservedBookList.stream().map(RequestReservedBook::getId).collect(Collectors.toList()));
+    private List<Book> getRequestedBooks(List<ReservedBook> reservedBookList) throws BookIsNotAvailableException {
+        List<Book> books = getBooksByIds(reservedBookList.stream().map(ReservedBook::getId).collect(Collectors.toList()));
         if (reservedBookList.size() != books.size()) {
             throw new BookIsNotAvailableException();
         } else {
@@ -107,10 +104,6 @@ public class WarehouseServiceLitRes implements WarehouseService {
         return bookRepository.findAll().stream()
                 .filter(book -> listIds.contains(book.getId()))
                 .collect(Collectors.toList());
-    }
-
-    private User getUserById(UUID userId) throws UserNotFoundException {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 }
 

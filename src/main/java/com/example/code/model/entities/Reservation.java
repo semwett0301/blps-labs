@@ -23,5 +23,5 @@ public class Reservation extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User user;
+    private Order order;
 }
