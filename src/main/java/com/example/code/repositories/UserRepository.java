@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    List<User> getAllByCourierIs(boolean courier);
+    List<User> getAllByIsCourier(boolean courier);
 }

@@ -1,6 +1,6 @@
 package com.example.code.api;
 
-import com.example.code.model.dto.ResponseAvailableBook;
+import com.example.code.model.dto.ResponseAvailableBookDTO;
 import com.example.code.services.WarehouseService.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseAvailableBook>> getAvailableBooks() {
+    public ResponseEntity<List<ResponseAvailableBookDTO>> getAvailableBooks() {
+
         return ResponseEntity.ok().body(warehouseService.getAllAvailableBooks());
     }
 }

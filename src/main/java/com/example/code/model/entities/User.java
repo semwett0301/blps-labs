@@ -29,9 +29,6 @@ public class User extends BaseEntity {
     private boolean isCourier;
 
     @OneToMany(mappedBy = "user")
-    private List<Reservation> reservations;
-
-    @OneToMany(mappedBy = "user")
     private List<Order> ownOrders;
 
     @OneToMany(mappedBy = "courier")

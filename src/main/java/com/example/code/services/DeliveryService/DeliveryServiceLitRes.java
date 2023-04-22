@@ -71,6 +71,6 @@ public class DeliveryServiceLitRes implements DeliveryService{
     }
 
     private List<User> getCouriers() {
-        return userRepository.getAllByCourierIs(true);
+        return userRepository.getAllByIsCourier(true);
     }
 }

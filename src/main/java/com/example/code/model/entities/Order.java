@@ -15,14 +15,14 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order")
+@Table(name = "order_book")
 @Check(constraints = "day > 1 and day <= 31 " +
         "and start_time >= 0 and start_time <= 23 " +
         "and end_time >= 0 and end_time <= 23" +
-        "and start_time < end_time")
+        "and start_time <= end_time")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int number;
 
     @Column(name = "order_status", nullable = false)
