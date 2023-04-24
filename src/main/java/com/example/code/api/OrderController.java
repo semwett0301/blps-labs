@@ -83,26 +83,31 @@ public class OrderController {
         }
     }
 
-    @PatchMapping("/acceptance/{orderId}/{isAccept}")
-    public ResponseEntity acceptOrder(@PathVariable int orderId, @PathVariable boolean isAccept) {
+    @PostMapping("/acceptance/{orderId}")
+    public ResponseEntity acceptOrder(@PathVariable int orderId) {
         try {
-            if (isAccept) {
-                deliveryService.acceptOrder(orderId);
-            } else {
-                deliveryService.choseCourierForOrder(orderId);
-            }
-        } catch (OrderNotFoundException | OrderHasBeenAlreadyAccepted | IncorrectTimePeriodException e) {
+            deliveryService.acceptOrder(orderId);
+            return ResponseEntity.ok().build();
+        } catch (OrderNotFoundException | OrderHasBeenAlreadyAccepted e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/acceptance/{orderId}")
+    public ResponseEntity declineOrder(@PathVariable int orderId) {
+        try {
+            deliveryService.choseCourierForOrder(orderId);
+            return ResponseEntity.ok().build();
+        } catch (OrderNotFoundException | IncorrectTimePeriodException |  OrderHasBeenAlreadyAccepted e) {
             return ResponseEntity.notFound().build();
         } catch (TimeIsNotAvailableException e) {
             try {
                 deliveryService.unsetTimeForOrder(orderId);
             } catch (OrderNotFoundException ex) {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.notFound().build();
+            throw new RuntimeException(e);
         }
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{orderId}")
