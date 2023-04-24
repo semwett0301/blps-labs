@@ -92,6 +92,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAccepted {
         Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
         order.setOrderStatus(OrderStatus.IN_PROCESS);
+        orderRepository.save(order);
     }
 
     @Override
