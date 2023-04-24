@@ -58,16 +58,16 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
+    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, OrderHasBeenAlreadyOnApproveException {
+        Order order = checkNotOnApprove(getOrderFromDatabase(orderId));
         order.setStartTime(timePeriod.getStart());
         order.setEndTime(timePeriod.getEnd());
         orderRepository.save(order);
     }
 
     @Override
-    public void unsetTimeForOrder(int orderId) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
+    public void unsetTimeForOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyOnApproveException, OrderHasBeenAlreadyAccepted {
+        Order order = checkOrderNotAccepted(checkNotOnApprove(getOrderFromDatabase(orderId)));
         order.setStartTime(0);
         order.setEndTime(0);
         order.setOrderStatus(OrderStatus.CREATED);
@@ -101,6 +101,14 @@ public class DeliveryServiceLitRes implements DeliveryService {
             orderRepository.save(order);
         } else {
             throw new OrderHasntBeenAccepted();
+        }
+    }
+
+    private Order checkNotOnApprove(Order order) throws OrderHasBeenAlreadyOnApproveException {
+        if (order.isOnApprove()) {
+            throw new OrderHasBeenAlreadyOnApproveException();
+        } else  {
+            return order;
         }
     }
 
@@ -139,8 +147,9 @@ public class DeliveryServiceLitRes implements DeliveryService {
                 .collect(Collectors.toList());
     }
 
-    private void setCourierForOrder(List<User> fitCouriers, Order order) throws TimeIsNotAvailableException {
+    private void setCourierForOrder(List<User> fitCouriers, Order order) throws TimeIsNotAvailableException, OrderNotFoundException {
         if (fitCouriers.size() == 0) {
+            cancelOrder(order.getNumber());
             throw new TimeIsNotAvailableException();
         } else {
             order.setCourier(fitCouriers.get(new Random().nextInt(fitCouriers.size())));

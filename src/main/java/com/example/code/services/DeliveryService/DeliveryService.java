@@ -15,9 +15,9 @@ public interface DeliveryService {
     List<TimePeriod> findAvailableTimePeriods(int orderId) throws OrderNotFoundException, IncorrectTimePeriodException;
     void cancelOrder(int orderId) throws OrderNotFoundException;
 
-    void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException;
+    void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, OrderHasBeenAlreadyOnApproveException;
 
-    void unsetTimeForOrder(int orderIs) throws OrderNotFoundException;
+    void unsetTimeForOrder(int orderIs) throws OrderNotFoundException, OrderHasBeenAlreadyOnApproveException, OrderHasBeenAlreadyAccepted;
 
     void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAccepted;
 

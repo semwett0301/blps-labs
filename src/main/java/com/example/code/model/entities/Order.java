@@ -54,4 +54,8 @@ public class Order {
     public boolean isAccepted() {
         return orderStatus == OrderStatus.IN_PROCESS || orderStatus == OrderStatus.DONE;
     }
+
+    public boolean isOnApprove() {
+        return orderStatus == OrderStatus.ON_APPROVE;
+    }
 }

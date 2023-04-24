@@ -70,14 +70,16 @@ public class OrderController {
             deliveryService.setTimeForOrder(orderId, timePeriod);
             deliveryService.choseCourierForOrder(orderId);
             return ResponseEntity.ok().body(timePeriod);
-        } catch (TimeIsNotAvailableException e) {
+        } catch (TimeIsNotAvailableException | OrderHasBeenAlreadyAccepted | OrderHasBeenAlreadyOnApproveException  e) {
             try {
                 deliveryService.unsetTimeForOrder(orderId);
             } catch (OrderNotFoundException ex) {
                 return ResponseEntity.notFound().build();
+            } catch (OrderHasBeenAlreadyAccepted | OrderHasBeenAlreadyOnApproveException ex) {
+                return ResponseEntity.badRequest().build();
             }
             return ResponseEntity.badRequest().build();
-        } catch (OrderNotFoundException | OrderHasBeenAlreadyAccepted | IncorrectTimePeriodException e) {
+        } catch (OrderNotFoundException | IncorrectTimePeriodException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -104,8 +106,10 @@ public class OrderController {
                 deliveryService.unsetTimeForOrder(orderId);
             } catch (OrderNotFoundException ex) {
                 return ResponseEntity.notFound().build();
+            } catch (OrderHasBeenAlreadyAccepted | OrderHasBeenAlreadyOnApproveException ex) {
+                return ResponseEntity.badRequest().build();
             }
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().build();
         }
     }
 
