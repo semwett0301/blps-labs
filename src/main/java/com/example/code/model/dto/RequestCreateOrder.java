@@ -11,8 +11,6 @@ import java.util.List;
 public class RequestCreateOrder {
     List<ReservedBook> books;
     int day;
-
-
 }
 
 

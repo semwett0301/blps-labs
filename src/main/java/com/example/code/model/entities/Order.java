@@ -33,10 +33,10 @@ public class Order {
     private int day;
 
     @Column(name = "start_time")
-    private int startTime;
+    private Integer startTime;
 
     @Column(name = "end_time")
-    private int endTime;
+    private Integer endTime;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -49,5 +49,9 @@ public class Order {
         this.day = day;
         this.orderStatus = orderStatus;
         this.user = user;
+    }
+
+    public boolean isAccepted() {
+        return orderStatus == OrderStatus.IN_PROCESS || orderStatus == OrderStatus.DONE;
     }
 }

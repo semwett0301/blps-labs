@@ -10,7 +10,6 @@ import com.example.code.model.mappers.BookMapper;
 import com.example.code.model.modelUtils.ReservedBook;
 import com.example.code.repositories.BookRepository;
 import com.example.code.repositories.ReservationRepository;
-import com.example.code.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +47,12 @@ public class WarehouseServiceLitRes implements WarehouseService {
         decreaseAvailableAmountOfBooks(bookReservations);
         createReservations(bookReservations, order);
         updateBooks(bookReservations);
+    }
+
+    @Override
+    public void removeReservation(Integer orderId) {
+        List<Reservation> reservations = reservationRepository.findAllByOrderNumber(orderId);
+        reservationRepository.deleteAll(reservations);
     }
 
     private List<BookReservation> createBookReservationList(List<ReservedBook> requestReservedBooks) throws BookIsNotAvailableException {

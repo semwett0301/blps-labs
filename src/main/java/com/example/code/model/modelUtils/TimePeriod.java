@@ -40,6 +40,11 @@ public class TimePeriod {
         return isAvailable;
     }
 
+    public boolean isAvailableForCourierInThisDay(User courier, int day) {
+        List<Order> currentOrders = courier.getOrdersFromCourierByDay(day);
+        return isFitForOrder(currentOrders);
+    }
+
     public static List<TimePeriod> createDefaultListOfTimePeriods() throws IncorrectTimePeriodException {
         final List<TimePeriod> resultList = new ArrayList<>();
         for (int i = 0; i < 23; i++) {

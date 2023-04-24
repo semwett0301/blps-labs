@@ -11,4 +11,6 @@ import java.util.List;
 public interface WarehouseService {
     List<ResponseAvailableBookDTO> getAllAvailableBooks();
     void reserveBooks(List<ReservedBook> reservedBookList, Order order) throws UserNotFoundException, BookIsNotAvailableException;
+
+    void removeReservation(Integer orderId);
 }
