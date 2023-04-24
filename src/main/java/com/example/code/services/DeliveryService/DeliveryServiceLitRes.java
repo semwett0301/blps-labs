@@ -36,9 +36,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public Order createOrder(int day) throws UserNotFoundException {
-        final UUID userId = UUID.fromString("48f68268-656c-49ff-a220-df39bb9f8241");
-
+    public Order createOrder(int day, UUID userId) throws UserNotFoundException {
         User user = getUserById(userId);
         return createOrder(day, user);
     }

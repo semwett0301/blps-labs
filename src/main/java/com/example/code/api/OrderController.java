@@ -30,21 +30,18 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseOrder>> getOrders() {
-        UUID customerId = UUID.fromString("48f68268-656c-49ff-a220-df39bb9f8241");
-        UUID courierId = UUID.fromString("b4780ccb-0aa7-4795-be17-3597f37e3f2a");
-
+    public ResponseEntity<List<ResponseOrder>> getOrders(@CookieValue(value = "user_id") UUID userId) {
         try {
-            return ResponseEntity.ok().body(deliveryService.getOrders(courierId));
+            return ResponseEntity.ok().body(deliveryService.getOrders(userId));
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<ResponseCreateOrder> createOrder(@RequestBody RequestCreateOrder requestCreateOrder) {
+    public ResponseEntity<ResponseCreateOrder> createOrder(@RequestBody RequestCreateOrder requestCreateOrder, @CookieValue(name = "user_id") UUID userId) {
         try {
-            Order order = deliveryService.createOrder(requestCreateOrder.getDay());
+            Order order = deliveryService.createOrder(requestCreateOrder.getDay(), userId);
             warehouseService.reserveBooks(requestCreateOrder.getBooks(), order);
             return ResponseEntity.ok().body(OrderMapper.INSTANCE.toResponseCreateOrder(order));
         } catch (UserNotFoundException e) {

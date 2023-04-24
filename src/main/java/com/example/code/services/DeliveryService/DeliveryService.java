@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface DeliveryService {
 
     List<ResponseOrder> getOrders(UUID userId) throws UserNotFoundException;
-    Order createOrder(int day) throws UserNotFoundException;
+    Order createOrder(int day, UUID userId) throws UserNotFoundException;
     List<TimePeriod> findAvailableTimePeriods(int orderId) throws OrderNotFoundException, IncorrectTimePeriodException;
     void cancelOrder(int orderId) throws OrderNotFoundException;
 
