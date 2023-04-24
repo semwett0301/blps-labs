@@ -1,6 +1,6 @@
 package com.example.code.services.WarehouseService;
 
-import com.example.code.model.dto.ResponseAvailableBookDTO;
+import com.example.code.model.dto.ResponseAvailableBook;
 import com.example.code.model.entities.Book;
 import com.example.code.model.entities.Order;
 import com.example.code.model.entities.Reservation;
@@ -34,10 +34,10 @@ public class WarehouseServiceLitRes implements WarehouseService {
     }
 
     @Override
-    public List<ResponseAvailableBookDTO> getAllAvailableBooks() {
+    public List<ResponseAvailableBook> getAllAvailableBooks() {
         return bookRepository.findAll().stream()
                 .filter(book -> book.getAvailableAmount() > book.getReservations().size())
-                .map(BookMapper.INSTANCE::toResponseAvailableBookDTO)
+                .map(BookMapper.INSTANCE::toResponseAvailableBook)
                 .collect(Collectors.toList());
     }
 

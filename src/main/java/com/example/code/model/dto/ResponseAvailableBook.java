@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-public class ResponseAvailableBookDTO {
+public class ResponseAvailableBook {
     private UUID id;
     private String name;
     private String description;
