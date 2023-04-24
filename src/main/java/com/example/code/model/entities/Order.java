@@ -22,7 +22,7 @@ import javax.persistence.*;
         "and start_time <= end_time")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int number;
 
     @Column(name = "order_status", nullable = false)
