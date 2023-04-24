@@ -13,12 +13,14 @@ import com.example.code.model.mappers.OrderMapper;
 import com.example.code.model.modelUtils.TimePeriod;
 import com.example.code.services.DeliveryService.DeliveryService;
 import com.example.code.services.WarehouseService.WarehouseService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
+@Api(value = "Orders", description = "Api related to orders")
 public class OrderController {
     private final WarehouseService warehouseService;
     private final DeliveryService deliveryService;
@@ -30,9 +32,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseOrder>> getOrders(@CookieValue(value = "user_id") UUID userId) {
+    public ResponseEntity<List<ResponseOrder>> getOrders(@CookieValue(value = "user_id") String userId) {
         try {
-            return ResponseEntity.ok().body(deliveryService.getOrders(userId));
+            return ResponseEntity.ok().body(deliveryService.getOrders(UUID.fromString(userId)));
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -119,11 +121,13 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public ResponseEntity completeOrder(@PathVariable Integer orderId) {
         try {
-            warehouseService.removeReservation(orderId);
             deliveryService.completeOrder(orderId);
+            warehouseService.removeReservation(orderId);
             return ResponseEntity.ok().build();
         } catch (OrderNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (OrderHasntBeenAccepted e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

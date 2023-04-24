@@ -94,10 +94,14 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void completeOrder(int orderId) throws OrderNotFoundException {
+    public void completeOrder(int orderId) throws OrderNotFoundException, OrderHasntBeenAccepted {
         Order order = getOrderFromDatabase(orderId);
-        order.setOrderStatus(OrderStatus.DONE);
-        orderRepository.save(order);
+        if (order.isAccepted()) {
+            order.setOrderStatus(OrderStatus.DONE);
+            orderRepository.save(order);
+        } else {
+            throw new OrderHasntBeenAccepted();
+        }
     }
 
     private Order checkOrderNotAccepted(Order order) throws OrderHasBeenAlreadyAccepted {
@@ -130,7 +134,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     private List<ResponseOrder> getOrdersForCustomer(User user) {
-        return orderRepository.findAllByUser(user.getId()).stream()
+        return orderRepository.findAllByUser(user).stream()
                 .map(OrderMapper.INSTANCE::toResponseOrders)
                 .collect(Collectors.toList());
     }
@@ -151,7 +155,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
         return couriers.stream()
                 .filter(courier -> timePeriod.isAvailableForCourierInThisDay(courier, order.getDay()))
-                .filter(courier -> !courier.getId().equals(order.getCourier().getId()))
+                .filter(courier -> order.getCourier() == null || !courier.getId().equals(order.getCourier().getId()))
                 .collect(Collectors.toList());
     }
 

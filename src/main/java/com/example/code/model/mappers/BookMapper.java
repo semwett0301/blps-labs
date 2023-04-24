@@ -11,5 +11,10 @@ import org.mapstruct.factory.Mappers;
 public interface BookMapper {
     BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
 
+    @Mappings({
+            @Mapping(source = "book.id", target = "id"),
+            @Mapping(source = "book.name", target = "name"),
+            @Mapping(source = "book.description", target = "description")
+    })
     ResponseAvailableBook toResponseAvailableBook(Book book);
 }

@@ -25,5 +25,5 @@ public interface DeliveryService {
 
     void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAccepted;
 
-    void completeOrder(int orderId) throws OrderNotFoundException;
+    void completeOrder(int orderId) throws OrderNotFoundException, OrderHasntBeenAccepted;
 }
