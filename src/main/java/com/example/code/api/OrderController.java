@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/orders")
 @Api(value = "Orders", description = "Api related to orders")
+
+// TODO Controller Advice
 public class OrderController {
     private final WarehouseService warehouseService;
     private final DeliveryService deliveryService;
@@ -53,7 +55,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/time/{orderId}")
+    @GetMapping("/time/{orderId}") // другой контроллер
     public ResponseEntity<ResponseAvailableTime> getAvailableTime(@PathVariable Integer orderId) {
         try {
             return ResponseEntity.ok().body(new ResponseAvailableTime(deliveryService.findAvailableTimePeriods(orderId)));
@@ -84,7 +86,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/acceptance/{orderId}")
+    @PostMapping("/acceptance/{orderId}") // TODO /{orderId}/accept
     public ResponseEntity acceptOrder(@PathVariable int orderId) {
         try {
             deliveryService.acceptOrder(orderId);
@@ -94,7 +96,7 @@ public class OrderController {
         }
     }
 
-    @DeleteMapping("/acceptance/{orderId}")
+    @DeleteMapping("/acceptance/{orderId}") // TODO /{orderId}/reject -- post
     public ResponseEntity declineOrder(@PathVariable int orderId) {
         try {
             deliveryService.choseCourierForOrder(orderId);
@@ -122,7 +124,7 @@ public class OrderController {
         }
     }
 
-    @PatchMapping("/{orderId}")
+    @PatchMapping("/{orderId}") // TODO POST -- /{orderId}/complete
     public ResponseEntity completeOrder(@PathVariable Integer orderId) {
         try {
             deliveryService.completeOrder(orderId);
