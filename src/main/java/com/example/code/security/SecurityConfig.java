@@ -1,6 +1,5 @@
 package com.example.code.security;
 
-import com.example.code.filter.AuthenticationFilter;
 import com.example.code.filter.AuthorizationFilter;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.security.utils.JwtUtils.JwtUtils;
@@ -14,7 +13,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
@@ -27,12 +26,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final JwtUtils jwtUtils;
+    private final PasswordEncoder passwordEncoder;
 
-    public final static String[] PERMIT_ALL_PATHS = {"/auth/login/**", "/auth/register/**", "/auth/logout/**", "/roles/**"};
+    public final static String[] PERMIT_ALL_PATHS = {"/auth/login", "/auth/register", "/auth/logout", "/auth/refresh", "/roles/**"};
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -42,30 +42,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        AuthenticationFilter authFilter = new AuthenticationFilter(jwtUtils, authenticationManagerBean());
-        authFilter.setFilterProcessesUrl("/auth/login");
-
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.csrf().disable();
 
         http.authorizeRequests().antMatchers(PERMIT_ALL_PATHS).permitAll();
 
-        http.authorizeRequests().antMatchers("/orders/acceptance/**").hasAuthority(Role.COURIER.name());
-        http.authorizeRequests().antMatchers(PATCH, "/orders/*").hasAuthority(Role.COURIER.name());
+        http.authorizeRequests().antMatchers("/orders/acceptance/**").hasAuthority(Role.COURIER.getRole());
+        http.authorizeRequests().antMatchers(PATCH, "/orders/*").hasAuthority(Role.COURIER.getRole());
 
-        http.authorizeRequests().antMatchers(POST, "/orders").hasAuthority(Role.USER.name());
-        http.authorizeRequests().antMatchers("/orders/time/**").hasAuthority(Role.USER.name());
-        http.authorizeRequests().antMatchers(GET, "/books").hasAuthority(Role.USER.name());
+        http.authorizeRequests().antMatchers(POST, "/orders").hasAuthority(Role.USER.getRole());
+        http.authorizeRequests().antMatchers("/orders/time/**").hasAuthority(Role.USER.getRole());
+        http.authorizeRequests().antMatchers(GET, "/books").hasAuthority(Role.USER.getRole());
 
-        http.authorizeRequests().antMatchers(GET, "/orders").hasAnyAuthority(Role.COURIER.name(), Role.USER.name());
-        http.authorizeRequests().antMatchers(GET, "/orders/*").hasAnyAuthority(Role.COURIER.name(), Role.USER.name());
-        http.authorizeRequests().antMatchers(DELETE, "/orders/*").hasAnyAuthority(Role.COURIER.name(), Role.USER.name());
+        http.authorizeRequests().antMatchers(GET, "/orders").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
+        http.authorizeRequests().antMatchers(GET, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
+        http.authorizeRequests().antMatchers(DELETE, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
 
-        http.authorizeRequests().anyRequest().authenticated();
-        http.addFilterBefore(new AuthorizationFilter()
-                , UsernamePasswordAuthenticationFilter.class);
-        http.addFilter(authFilter);
+        http.addFilterAt(new AuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

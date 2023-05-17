@@ -2,10 +2,11 @@ package com.example.code.services.AuthService;
 
 import com.example.code.model.dto.request.RequestLogIn;
 import com.example.code.model.dto.request.RequestRegister;
-import com.example.code.model.dto.response.ResponseUser;
+import com.example.code.model.exceptions.UserNotFoundException;
+import com.example.code.model.modelUtils.Role;
 
 public interface AuthService {
-    ResponseUser register(RequestRegister requestRegister);
+    void register(RequestRegister requestRegister) throws UserNotFoundException;
 
-    ResponseUser logIn(RequestLogIn requestLogIn);
+    Role findUserRole(String username);
 }

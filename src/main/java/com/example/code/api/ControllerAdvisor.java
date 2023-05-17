@@ -1,5 +1,6 @@
 package com.example.code.api;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.code.model.exceptions.*;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class ControllerAdvisor {
     public ResponseEntity<String> handleBookIsNotAvailable(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(IncorrectTimePeriodException.class)
     public ResponseEntity<String> handleIncorrectTimePeriod(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -43,5 +45,8 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<String> handleTokenExpired(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 }
