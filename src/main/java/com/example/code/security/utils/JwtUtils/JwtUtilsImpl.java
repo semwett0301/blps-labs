@@ -23,18 +23,22 @@ public class JwtUtilsImpl implements JwtUtils {
 
     @Override
     public String createJWTAccessToken(String username, Role role) {
+        int accessTime = 100 * 60 * 1000;
+
         return JWT.create()
                 .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + accessTime))
                 .withClaim("authorities", role.getRole())
                 .sign(algorithm);
     }
 
     @Override
     public String createJWTRefreshToken(String username) {
+        long refreshTime = 10000 * 60 * 1000;
+
         return JWT.create()
                 .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 100000 * 60 * 100))
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTime))
                 .sign(algorithm);
     }
 
