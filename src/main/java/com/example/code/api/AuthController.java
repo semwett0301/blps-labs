@@ -4,15 +4,17 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.code.model.dto.request.RequestLogIn;
 import com.example.code.model.dto.request.RequestRegister;
 import com.example.code.model.dto.response.ResponseUserAuthorized;
-import com.example.code.model.exceptions.UserNotFoundException;
+import com.example.code.model.exceptions.UserAlreadyExistException;
 import com.example.code.model.modelUtils.Role;
+import com.example.code.security.utils.CookieUtils.TokenCookieUtils;
 import com.example.code.security.utils.JwtUtils.JwtUtils;
 import com.example.code.services.AuthService.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,7 +36,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody RequestRegister requestRegister) throws UserNotFoundException {
+    public void register(@RequestBody RequestRegister requestRegister) throws UserAlreadyExistException {
+        authService.checkUserExist(requestRegister.getUsername());
         authService.register(requestRegister);
     }
 
@@ -42,40 +45,32 @@ public class AuthController {
     public ResponseEntity<?> logout() {
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, createAccessTokenCookie(null).toString())
+                .header(HttpHeaders.SET_COOKIE, TokenCookieUtils.createAccessTokenResponseCookie(null).toString(), TokenCookieUtils.createRefreshTokenResponseCookie(null).toString())
                 .build();
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<ResponseUserAuthorized> refreshToken(@CookieValue("refresh-token") String refreshToken) {
-        DecodedJWT decodedRefreshToken = jwtUtils.getDecodedJwt(refreshToken);
+        Optional<DecodedJWT> decodedRefreshToken = jwtUtils.getDecodedJwt(refreshToken);
 
-        Role userRole = authService.findUserRole(decodedRefreshToken.getSubject());
-        return getResponseAuthorizedEntity(decodedRefreshToken.getSubject(), userRole);
+        if (decodedRefreshToken.isPresent()) {
+            Role userRole = authService.findUserRole(decodedRefreshToken.get().getSubject());
+            return getResponseAuthorizedEntity(decodedRefreshToken.get().getSubject(), userRole);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     private ResponseEntity<ResponseUserAuthorized> getResponseAuthorizedEntity(String username, Role role) {
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, createAccessTokenCookie(jwtUtils.createJWTAccessToken(username, role)).toString(),
-                        createRefreshTokenCookie(jwtUtils.createJWTRefreshToken(username)).toString())
+                .header(HttpHeaders.SET_COOKIE, TokenCookieUtils.createAccessTokenResponseCookie(jwtUtils.createJWTAccessToken(username, role)).toString(),
+                       TokenCookieUtils.createRefreshTokenResponseCookie(jwtUtils.createJWTRefreshToken(username)).toString())
                 .body(new ResponseUserAuthorized(role));
     }
 
-    private ResponseCookie createAccessTokenCookie(String token) {
-        return ResponseCookie
-                .from("access-token", token)
-                .path("/")
-                .httpOnly(true)
-                .build();
-    }
 
-    private ResponseCookie createRefreshTokenCookie(String token) {
-        return ResponseCookie
-                .from("refresh-token", token)
-                .path("/auth/refresh")
-                .httpOnly(true)
-                .build();
-    }
+
+
 }
 

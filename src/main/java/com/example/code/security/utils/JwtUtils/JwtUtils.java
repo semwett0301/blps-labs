@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public interface JwtUtils {
     String createJWTAccessToken(String username, Role role);
@@ -14,5 +15,5 @@ public interface JwtUtils {
 
     UsernamePasswordAuthenticationToken getUsernamePasswordAuthTokenFromJwt(DecodedJWT jwtToken);
 
-    DecodedJWT getDecodedJwt(String token);
+    Optional<DecodedJWT> getDecodedJwt(String token);
 }

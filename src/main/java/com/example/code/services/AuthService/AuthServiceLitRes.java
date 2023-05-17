@@ -2,6 +2,7 @@ package com.example.code.services.AuthService;
 
 import com.example.code.model.dto.request.RequestRegister;
 import com.example.code.model.entities.UserInfo;
+import com.example.code.model.exceptions.UserAlreadyExistException;
 import com.example.code.model.exceptions.UserNotFoundException;
 import com.example.code.model.mappers.UserInfoMapper;
 import com.example.code.model.modelUtils.Role;
@@ -29,9 +30,7 @@ public class AuthServiceLitRes implements AuthService {
     }
 
     @Override
-    public void register(RequestRegister requestRegister) throws UserNotFoundException {
-        if (userRepository.findByUsername(requestRegister.getUsername()).isPresent()) throw new UserNotFoundException();
-
+    public void register(RequestRegister requestRegister) {
         UserInfo newUserInfo = UserInfoMapper.INSTANCE.toUserInfo(requestRegister);
         newUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
         userRepository.save(newUserInfo);
@@ -41,5 +40,10 @@ public class AuthServiceLitRes implements AuthService {
     public Role findUserRole(String username) {
         UserInfo userInfo = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User wasn't found"));
         return userInfo.getRole();
+    }
+
+    @Override
+    public void checkUserExist(String username) throws UserAlreadyExistException {
+        if (userRepository.findByUsername(username).isPresent()) throw new UserAlreadyExistException();
     }
 }

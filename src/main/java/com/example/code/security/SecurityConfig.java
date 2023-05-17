@@ -1,6 +1,7 @@
 package com.example.code.security;
 
 import com.example.code.filter.AuthorizationFilter;
+import com.example.code.filter.UpdateTokenFilter;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.security.utils.JwtUtils.JwtUtils;
 import lombok.AllArgsConstructor;
@@ -60,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(DELETE, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
 
         http.addFilterAt(new AuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new UpdateTokenFilter(jwtUtils), AuthorizationFilter.class);
     }
 
     @Bean

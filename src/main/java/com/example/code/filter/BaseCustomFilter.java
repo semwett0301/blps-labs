@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static com.example.code.security.SecurityConfig.PERMIT_ALL_PATHS;
+import static com.example.code.security.utils.CookieUtils.TokenCookieUtils.ACCESS_NAME;
 
 public abstract class BaseCustomFilter extends OncePerRequestFilter {
     protected final JwtUtils jwtUtils;
@@ -21,7 +22,7 @@ public abstract class BaseCustomFilter extends OncePerRequestFilter {
         return Arrays.asList(PERMIT_ALL_PATHS).contains(request.getServletPath());
     }
     protected Optional<DecodedJWT> getAccessToken(HttpServletRequest request) {
-        return getToken(request, "access-token");
+        return getToken(request, ACCESS_NAME);
     }
 
     private Optional<DecodedJWT> getToken(HttpServletRequest request, String name) {
@@ -33,6 +34,6 @@ public abstract class BaseCustomFilter extends OncePerRequestFilter {
                 }
             }
         }
-        return Optional.ofNullable(jwtUtils.getDecodedJwt(token));
+        return jwtUtils.getDecodedJwt(token);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.code.security.utils.JwtUtils;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.code.model.modelUtils.Role;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtUtilsImpl implements JwtUtils {
@@ -42,8 +44,12 @@ public class JwtUtilsImpl implements JwtUtils {
     }
 
     @Override
-    public DecodedJWT getDecodedJwt(String token) {
-        return JWT.require(algorithm).build().verify(token);
+    public Optional<DecodedJWT> getDecodedJwt(String token) {
+        try {
+            return Optional.of(JWT.require(algorithm).build().verify(token));
+        } catch (JWTVerificationException | NullPointerException ex) {
+            return Optional.empty();
+        }
     }
 
     private Collection<SimpleGrantedAuthority> getAuthorities(DecodedJWT decodedJWT) {

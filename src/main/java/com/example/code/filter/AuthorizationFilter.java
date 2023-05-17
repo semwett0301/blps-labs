@@ -1,5 +1,6 @@
 package com.example.code.filter;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.code.security.utils.JwtUtils.JwtUtils;
