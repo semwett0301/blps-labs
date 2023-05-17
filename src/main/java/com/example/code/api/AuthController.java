@@ -1,5 +1,6 @@
 package com.example.code.api;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.code.model.dto.request.RequestLogIn;
 import com.example.code.model.dto.request.RequestRegister;
@@ -51,25 +52,19 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<ResponseUserAuthorized> refreshToken(@CookieValue("refresh-token") String refreshToken) {
-        Optional<DecodedJWT> decodedRefreshToken = jwtUtils.getDecodedJwt(refreshToken);
+        DecodedJWT decodedRefreshToken = jwtUtils.getDecodedJwt(refreshToken).orElseThrow(() -> new TokenExpiredException("Refresh token is incorrect"));
 
-        if (decodedRefreshToken.isPresent()) {
-            Role userRole = authService.findUserRole(decodedRefreshToken.get().getSubject());
-            return getResponseAuthorizedEntity(decodedRefreshToken.get().getSubject(), userRole);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        Role userRole = authService.findUserRole(decodedRefreshToken.getSubject());
+        return getResponseAuthorizedEntity(decodedRefreshToken.getSubject(), userRole);
     }
 
     private ResponseEntity<ResponseUserAuthorized> getResponseAuthorizedEntity(String username, Role role) {
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.SET_COOKIE, TokenCookieUtils.createAccessTokenResponseCookie(jwtUtils.createJWTAccessToken(username, role)).toString(),
-                       TokenCookieUtils.createRefreshTokenResponseCookie(jwtUtils.createJWTRefreshToken(username)).toString())
+                        TokenCookieUtils.createRefreshTokenResponseCookie(jwtUtils.createJWTRefreshToken(username)).toString())
                 .body(new ResponseUserAuthorized(role));
     }
-
-
 
 
 }
