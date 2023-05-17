@@ -19,11 +19,11 @@ public interface DeliveryService {
 
     void unsetTimeForOrder(int orderIs) throws OrderNotFoundException;
 
-    void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAccepted;
+    void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException;
 
     ResponseOrder getOrder(int orderId) throws OrderNotFoundException;
 
-    void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAccepted;
+    void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException;
 
     void completeOrder(int orderId) throws OrderNotFoundException;
 }

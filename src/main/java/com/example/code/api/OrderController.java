@@ -30,111 +30,63 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseOrder>> getOrders(@CookieValue(value = "user_id") UUID userId) {
-        try {
-            return ResponseEntity.ok().body(deliveryService.getOrders(userId));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public List<ResponseOrder> getOrders(@CookieValue(value = "user_id") UUID userId) throws UserNotFoundException {
+        return deliveryService.getOrders(userId);
     }
 
     @PostMapping
-    public ResponseEntity<ResponseCreateOrder> createOrder(@RequestBody RequestCreateOrder requestCreateOrder, @CookieValue(name = "user_id") UUID userId) {
-        try {
-            Order order = deliveryService.createOrder(requestCreateOrder.getDay(), userId);
-            warehouseService.reserveBooks(requestCreateOrder.getBooks(), order);
-            return ResponseEntity.ok().body(OrderMapper.INSTANCE.toResponseCreateOrder(order));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (BookIsNotAvailableException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseCreateOrder createOrder(@RequestBody RequestCreateOrder requestCreateOrder, @CookieValue(name = "user_id") UUID userId) throws UserNotFoundException, BookIsNotAvailableException {
+        Order order = deliveryService.createOrder(requestCreateOrder.getDay(), userId);
+        warehouseService.reserveBooks(requestCreateOrder.getBooks(), order);
+        return OrderMapper.INSTANCE.toResponseCreateOrder(order);
     }
 
     @GetMapping("/time/{orderId}")
-    public ResponseEntity<ResponseAvailableTime> getAvailableTime(@PathVariable Integer orderId) {
-        try {
-            return ResponseEntity.ok().body(new ResponseAvailableTime(deliveryService.findAvailableTimePeriods(orderId)));
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IncorrectTimePeriodException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseAvailableTime getAvailableTime(@PathVariable Integer orderId) throws OrderNotFoundException, IncorrectTimePeriodException {
+        return new ResponseAvailableTime(deliveryService.findAvailableTimePeriods(orderId));
     }
 
     @PostMapping("/time/{orderId}")
-    public ResponseEntity<TimePeriod> setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) {
+    public TimePeriod setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
         try {
             deliveryService.setTimeForOrder(orderId, timePeriod);
             deliveryService.choseCourierForOrder(orderId);
-            return ResponseEntity.ok().body(timePeriod);
+            return timePeriod;
         } catch (TimeIsNotAvailableException e) {
-            try {
-                deliveryService.unsetTimeForOrder(orderId);
-            } catch (OrderNotFoundException ex) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.badRequest().build();
-        } catch (OrderNotFoundException | OrderHasBeenAlreadyAccepted | IncorrectTimePeriodException e) {
-            return ResponseEntity.notFound().build();
+            deliveryService.unsetTimeForOrder(orderId);
+            throw e;
         }
     }
 
     @PostMapping("/acceptance/{orderId}")
-    public ResponseEntity acceptOrder(@PathVariable int orderId) {
-        try {
-            deliveryService.acceptOrder(orderId);
-            return ResponseEntity.ok().build();
-        } catch (OrderNotFoundException | OrderHasBeenAlreadyAccepted e) {
-            return ResponseEntity.notFound().build();
-        }
+    public void acceptOrder(@PathVariable int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
+        deliveryService.acceptOrder(orderId);
     }
 
     @DeleteMapping("/acceptance/{orderId}")
-    public ResponseEntity declineOrder(@PathVariable int orderId) {
+    public void declineOrder(@PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
         try {
             deliveryService.choseCourierForOrder(orderId);
-            return ResponseEntity.ok().build();
-        } catch (OrderNotFoundException | IncorrectTimePeriodException |  OrderHasBeenAlreadyAccepted e) {
-            return ResponseEntity.notFound().build();
         } catch (TimeIsNotAvailableException e) {
-            try {
-                deliveryService.unsetTimeForOrder(orderId);
-            } catch (OrderNotFoundException ex) {
-                return ResponseEntity.notFound().build();
-            }
-            throw new RuntimeException(e);
+            deliveryService.unsetTimeForOrder(orderId);
+            throw e;
         }
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ResponseOrder> getOrder(@PathVariable int orderId) {
-        try {
-            return ResponseEntity.ok().body(deliveryService.getOrder(orderId));
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseOrder getOrder(@PathVariable int orderId) throws OrderNotFoundException {
+        return deliveryService.getOrder(orderId);
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity completeOrder(@PathVariable Integer orderId) {
-        try {
-            warehouseService.removeReservation(orderId);
-            deliveryService.completeOrder(orderId);
-            return ResponseEntity.ok().build();
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public void completeOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
+        warehouseService.removeReservation(orderId);
+        deliveryService.completeOrder(orderId);
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity cancelOrder(@PathVariable Integer orderId) {
-        try {
-            warehouseService.removeReservation(orderId);
-            deliveryService.cancelOrder(orderId);
-            return ResponseEntity.ok().build();
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public void cancelOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
+        warehouseService.removeReservation(orderId);
+        deliveryService.cancelOrder(orderId);
     }
 }

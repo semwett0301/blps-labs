@@ -2,7 +2,6 @@ package com.example.code.api;
 
 import com.example.code.model.dto.response.ResponseAvailableBook;
 import com.example.code.services.WarehouseService.WarehouseService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/books")
-@Api(value = "Books", description = "Api related to books")
 public class BookController {
 
     private final WarehouseService warehouseService;
@@ -24,8 +22,7 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseAvailableBook>> getAvailableBooks() {
-
-        return ResponseEntity.ok().body(warehouseService.getAllAvailableBooks());
+    public List<ResponseAvailableBook> getAvailableBooks() {
+        return warehouseService.getAllAvailableBooks();
     }
 }

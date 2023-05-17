@@ -76,7 +76,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAccepted {
+    public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
         Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
         List<UserInfo> fitCouriers = getAvailableCouriersForOrder(order);
         setCourierForOrder(fitCouriers, order);
@@ -88,7 +88,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAccepted {
+    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
         Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
         order.setOrderStatus(OrderStatus.IN_PROCESS);
         orderRepository.save(order);
@@ -101,9 +101,9 @@ public class DeliveryServiceLitRes implements DeliveryService {
         orderRepository.save(order);
     }
 
-    private Order checkOrderNotAccepted(Order order) throws OrderHasBeenAlreadyAccepted {
+    private Order checkOrderNotAccepted(Order order) throws OrderHasBeenAlreadyAcceptedException {
         if (order.isAccepted()) {
-            throw new OrderHasBeenAlreadyAccepted();
+            throw new OrderHasBeenAlreadyAcceptedException();
         } else  {
             return order;
         }
