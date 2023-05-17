@@ -12,5 +12,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResponseUserAuthorized {
     private Role role;
-    private String refresh;
 }

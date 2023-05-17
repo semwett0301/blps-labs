@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,10 +30,7 @@ public class AuthController {
     public ResponseEntity<ResponseUserAuthorized> login(@RequestBody RequestLogIn requestLogIn) {
         Role userRole = authService.findUserRole(requestLogIn.getUsername());
 
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.SET_COOKIE, createAccessTokenCookie(jwtUtils.createJWTAccessToken(requestLogIn.getUsername(), userRole)).toString())
-                .body(new ResponseUserAuthorized(userRole, jwtUtils.createJWTRefreshToken(requestLogIn.getUsername())));
+        return getResponseAuthorizedEntity(requestLogIn.getUsername(), userRole);
     }
 
     @PostMapping("/register")
@@ -53,20 +47,33 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ResponseUserAuthorized> refreshToken(@RequestBody String refreshToken) {
+    public ResponseEntity<ResponseUserAuthorized> refreshToken(@CookieValue("refresh-token") String refreshToken) {
         DecodedJWT decodedRefreshToken = jwtUtils.getDecodedJwt(refreshToken);
 
         Role userRole = authService.findUserRole(decodedRefreshToken.getSubject());
+        return getResponseAuthorizedEntity(decodedRefreshToken.getSubject(), userRole);
+    }
+
+    private ResponseEntity<ResponseUserAuthorized> getResponseAuthorizedEntity(String username, Role role) {
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, createAccessTokenCookie(jwtUtils.createJWTAccessToken(decodedRefreshToken.getSubject(), userRole)).toString())
-                .body(new ResponseUserAuthorized(userRole, jwtUtils.createJWTRefreshToken(decodedRefreshToken.getSubject())));
+                .header(HttpHeaders.SET_COOKIE, createAccessTokenCookie(jwtUtils.createJWTAccessToken(username, role)).toString(),
+                        createRefreshTokenCookie(jwtUtils.createJWTRefreshToken(username)).toString())
+                .body(new ResponseUserAuthorized(role));
     }
 
     private ResponseCookie createAccessTokenCookie(String token) {
         return ResponseCookie
                 .from("access-token", token)
                 .path("/")
+                .httpOnly(true)
+                .build();
+    }
+
+    private ResponseCookie createRefreshTokenCookie(String token) {
+        return ResponseCookie
+                .from("refresh-token", token)
+                .path("/auth/refresh")
                 .httpOnly(true)
                 .build();
     }
