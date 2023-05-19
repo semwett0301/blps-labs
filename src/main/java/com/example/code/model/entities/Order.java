@@ -1,6 +1,8 @@
 package com.example.code.model.entities;
 
 
+import com.example.code.model.exceptions.OrderHasBeenAlreadyAcceptedException;
+import com.example.code.model.exceptions.TimeHasBeenAlreadyChosenException;
 import com.example.code.model.modelUtils.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,7 +53,19 @@ public class Order {
         this.user = user;
     }
 
-    public boolean isAccepted() {
-        return orderStatus == OrderStatus.IN_PROCESS || orderStatus == OrderStatus.DONE;
+    public Order validateNotAccepted() throws OrderHasBeenAlreadyAcceptedException {
+        if (orderStatus == OrderStatus.IN_PROCESS || orderStatus == OrderStatus.DONE) {
+            throw new OrderHasBeenAlreadyAcceptedException();
+        }
+
+        return this;
+    }
+
+    public Order validateTimeNotSet() throws TimeHasBeenAlreadyChosenException {
+        if (startTime != null || endTime != null) {
+            throw new TimeHasBeenAlreadyChosenException();
+        }
+
+        return this;
     }
 }

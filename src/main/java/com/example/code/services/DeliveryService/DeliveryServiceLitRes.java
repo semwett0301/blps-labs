@@ -6,19 +6,20 @@ import com.example.code.model.entities.UserInfo;
 import com.example.code.model.exceptions.*;
 import com.example.code.model.mappers.OrderMapper;
 import com.example.code.model.modelUtils.OrderStatus;
+import com.example.code.model.modelUtils.ReservedBook;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.model.modelUtils.TimePeriod;
 import com.example.code.repositories.OrderRepository;
 import com.example.code.repositories.UserRepository;
+import com.example.code.services.WarehouseService.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +27,13 @@ public class DeliveryServiceLitRes implements DeliveryService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
+    private final WarehouseService warehouseService;
+
     @Autowired
-    public DeliveryServiceLitRes(UserRepository userRepository, OrderRepository orderRepository) {
+    public DeliveryServiceLitRes(UserRepository userRepository, OrderRepository orderRepository, WarehouseService warehouseService) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
+        this.warehouseService = warehouseService;
     }
 
     @Override
@@ -39,9 +43,12 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public Order createOrder(int day, String username) throws UserNotFoundException {
+    @Transactional(rollbackOn = Exception.class)
+    public Order createOrder(int day, List<ReservedBook> books, String username) throws UserNotFoundException, BookIsNotAvailableException {
         UserInfo user = getUserByUsername(username);
-        return createOrder(day, user);
+        Order order = createOrder(day, user);
+        warehouseService.reserveBooks(books, order);
+        return order;
     }
 
     @Override
@@ -53,68 +60,76 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void cancelOrder(int orderId) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
-        order.setCourier(null);
-        order.setOrderStatus(OrderStatus.CANCELED);
-        orderRepository.save(order);
+        saveOrder(getOrderSafety(orderId), OrderStatus.CANCELED, null);
+        warehouseService.removeReservation(orderId);
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
+    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeHasBeenAlreadyChosenException {
         setStartAndEndTimeForOrder(orderId, timePeriod);
         choseCourierForOrder(orderId);
     }
 
     @Override
-    public void unsetTimeForOrder(int orderId) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
+    public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
+        try {
+            findAndSetCourierForOrder(orderId);
+        } catch (TimeIsNotAvailableException ex) {
+            unsetTimeForOrder(orderId);
+            throw ex;
+        }
+    }
+
+    @Override
+    public ResponseOrder getOrder(int orderId) throws OrderNotFoundException {
+        return OrderMapper.INSTANCE.toResponseOrders(getOrderSafety(orderId));
+    }
+
+    @Override
+    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
+        saveOrder(getOrderSafety(orderId).validateNotAccepted(), OrderStatus.IN_PROCESS);
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void completeOrder(int orderId) throws OrderNotFoundException {
+        saveOrder(getOrderSafety(orderId), OrderStatus.DONE);
+        warehouseService.removeReservation(orderId);
+    }
+
+    private void saveOrder(Order order, OrderStatus orderStatus) {
+        order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
+    }
+
+    private void saveOrder(Order order, OrderStatus orderStatus, @Nullable UserInfo courier) {
+        order.setOrderStatus(orderStatus);
+        order.setCourier(courier);
+        orderRepository.save(order);
+    }
+
+    private void findAndSetCourierForOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException, IncorrectTimePeriodException, TimeIsNotAvailableException {
+        Order order = getOrderSafety(orderId).validateNotAccepted();
+        List<UserInfo> fitCouriers = getAvailableCouriersForOrder(order);
+        setCourierForOrderSafety(fitCouriers, order);
+    }
+
+    private void unsetTimeForOrder(int orderId) throws OrderNotFoundException {
+        Order order = getOrderSafety(orderId);
         order.setStartTime(0);
         order.setEndTime(0);
         order.setOrderStatus(OrderStatus.CREATED);
         orderRepository.save(order);
     }
 
-    @Override
-    public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
-        Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
-        List<UserInfo> fitCouriers = getAvailableCouriersForOrder(order);
-        setCourierForOrder(fitCouriers, order);
-    }
-
-    @Override
-    public ResponseOrder getOrder(int orderId) throws OrderNotFoundException {
-        return OrderMapper.INSTANCE.toResponseOrders(getOrderFromDatabase(orderId));
-    }
-
-    @Override
-    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
-        Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
-        order.setOrderStatus(OrderStatus.IN_PROCESS);
-        orderRepository.save(order);
-    }
-
-    @Override
-    public void completeOrder(int orderId) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
-        order.setOrderStatus(OrderStatus.DONE);
-        orderRepository.save(order);
-    }
-
-    private void setStartAndEndTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException {
-        Order order = getOrderFromDatabase(orderId);
+    private void setStartAndEndTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeHasBeenAlreadyChosenException {
+        Order order = getOrderSafety(orderId).validateTimeNotSet();
         order.setStartTime(timePeriod.getStart());
         order.setEndTime(timePeriod.getEnd());
         orderRepository.save(order);
-    }
-
-    private Order checkOrderNotAccepted(Order order) throws OrderHasBeenAlreadyAcceptedException {
-        if (order.isAccepted()) {
-            throw new OrderHasBeenAlreadyAcceptedException();
-        } else {
-            return order;
-        }
     }
 
     private List<TimePeriod> findTimePeriodsForCouriers(List<UserInfo> couriers, int day) throws IncorrectTimePeriodException {
@@ -123,13 +138,8 @@ public class DeliveryServiceLitRes implements DeliveryService {
                 .collect(Collectors.toList());
     }
 
-    private Order getOrderFromDatabase(int orderId) throws OrderNotFoundException {
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isEmpty()) {
-            throw new OrderNotFoundException();
-        } else {
-            return order.get();
-        }
+    private Order getOrderSafety(int orderId) throws OrderNotFoundException {
+        return orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
     }
 
     private List<ResponseOrder> getOrdersForCourier(UserInfo user) {
@@ -144,14 +154,18 @@ public class DeliveryServiceLitRes implements DeliveryService {
                 .collect(Collectors.toList());
     }
 
-    private void setCourierForOrder(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
+    private void setCourierForOrderSafety(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
         if (fitCouriers.size() == 0) {
             throw new TimeIsNotAvailableException();
         } else {
-            order.setCourier(fitCouriers.get(new Random().nextInt(fitCouriers.size())));
-            order.setOrderStatus(OrderStatus.ON_APPROVE);
-            orderRepository.save(order);
+            setCourierForOrder(fitCouriers, order);
         }
+    }
+
+    private void setCourierForOrder(List<UserInfo> fitCouriers, Order order) {
+        order.setCourier(fitCouriers.get(new Random().nextInt(fitCouriers.size())));
+        order.setOrderStatus(OrderStatus.ON_APPROVE);
+        orderRepository.save(order);
     }
 
     private List<UserInfo> getAvailableCouriersForOrder(Order order) throws IncorrectTimePeriodException {
@@ -175,7 +189,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     private int getOrderDay(int orderId) throws OrderNotFoundException {
-        return getOrderFromDatabase(orderId).getDay();
+        return getOrderSafety(orderId).getDay();
     }
 
     private List<UserInfo> getCouriers() {

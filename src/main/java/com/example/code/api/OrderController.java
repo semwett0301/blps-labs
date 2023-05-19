@@ -22,12 +22,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    private final WarehouseService warehouseService;
     private final DeliveryService deliveryService;
 
     @Autowired
-    public OrderController(WarehouseService warehouseService, DeliveryService deliveryService) {
-        this.warehouseService = warehouseService;
+    public OrderController(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
 
@@ -37,11 +35,10 @@ public class OrderController {
         return deliveryService.getOrders(username);
     }
 
-    @PostMapping
+    @PostMapping //
     public ResponseCreateOrder createOrder(@RequestBody RequestCreateOrder requestCreateOrder) throws UserNotFoundException, BookIsNotAvailableException {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Order order = deliveryService.createOrder(requestCreateOrder.getDay(), username);
-        warehouseService.reserveBooks(requestCreateOrder.getBooks(), order);
+        Order order = deliveryService.createOrder(requestCreateOrder.getDay(), requestCreateOrder.getBooks(), username);
         return OrderMapper.INSTANCE.toResponseCreateOrder(order);
     }
 
@@ -51,7 +48,7 @@ public class OrderController {
     }
 
     @PostMapping("/time/{orderId}")
-    public TimePeriod setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
+    public TimePeriod setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException, TimeHasBeenAlreadyChosenException {
         deliveryService.setTimeForOrder(orderId, timePeriod);
         return timePeriod;
     }
@@ -71,15 +68,13 @@ public class OrderController {
         return deliveryService.getOrder(orderId);
     }
 
-    @PatchMapping("/{orderId}")
+    @PatchMapping("/{orderId}") //
     public void completeOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
-        warehouseService.removeReservation(orderId);
         deliveryService.completeOrder(orderId);
     }
 
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/{orderId}") //
     public void cancelOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
-        warehouseService.removeReservation(orderId);
         deliveryService.cancelOrder(orderId);
     }
 }

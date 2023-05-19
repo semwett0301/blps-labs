@@ -16,6 +16,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,8 @@ public class WarehouseServiceLitRes implements WarehouseService {
     }
 
     @Override
-    public void reserveBooks(List<ReservedBook> reservedBook, Order order) throws UserNotFoundException, BookIsNotAvailableException {
+    @Transactional(rollbackOn = Exception.class)
+    public void reserveBooks(List<ReservedBook> reservedBook, Order order) throws BookIsNotAvailableException {
         List<BookReservation> bookReservations = createBookReservationList(reservedBook);
         decreaseAvailableAmountOfBooks(bookReservations);
         createReservations(bookReservations, order);
@@ -62,7 +64,7 @@ public class WarehouseServiceLitRes implements WarehouseService {
         for (Book book : books) {
             final int requestedAmount = requestReservedBooks.stream()
                     .filter(e -> e.getId().equals(book.getId()))
-                    .collect(Collectors.toList())
+                    .toList()
                     .get(0)
                     .getAmount();
             bookReservations.add(new BookReservation(book, requestedAmount));

@@ -54,4 +54,9 @@ public class ControllerAdvisor {
     public ResponseEntity<String> handleUserAlreadyExist(UserAlreadyExistException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(TimeHasBeenAlreadyChosenException.class)
+    public ResponseEntity<String> handleTimeHasBeenAlreadyChosen(TimeHasBeenAlreadyChosenException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
