@@ -61,13 +61,9 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
-        Order order = getOrderFromDatabase(orderId);
-        order.setStartTime(timePeriod.getStart());
-        order.setEndTime(timePeriod.getEnd());
-        orderRepository.save(order);
-
+        setStartAndEndTimeForOrder(orderId, timePeriod);
         choseCourierForOrder(orderId);
     }
 
@@ -81,7 +77,6 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    @Transactional
     public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
         Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
         List<UserInfo> fitCouriers = getAvailableCouriersForOrder(order);
@@ -104,6 +99,13 @@ public class DeliveryServiceLitRes implements DeliveryService {
     public void completeOrder(int orderId) throws OrderNotFoundException {
         Order order = getOrderFromDatabase(orderId);
         order.setOrderStatus(OrderStatus.DONE);
+        orderRepository.save(order);
+    }
+
+    private void setStartAndEndTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException {
+        Order order = getOrderFromDatabase(orderId);
+        order.setStartTime(timePeriod.getStart());
+        order.setEndTime(timePeriod.getEnd());
         orderRepository.save(order);
     }
 
@@ -131,7 +133,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     private List<ResponseOrder> getOrdersForCourier(UserInfo user) {
-        return orderRepository.findAllByCourier(user.getId()).stream()
+        return orderRepository.findAllByCourier(user).stream()
                 .map(OrderMapper.INSTANCE::toResponseOrders)
                 .collect(Collectors.toList());
     }
@@ -142,7 +144,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
                 .collect(Collectors.toList());
     }
 
-    public void setCourierForOrder(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
+    private void setCourierForOrder(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
         if (fitCouriers.size() == 0) {
             throw new TimeIsNotAvailableException();
         } else {
@@ -158,7 +160,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
         return couriers.stream()
                 .filter(courier -> timePeriod.isAvailableForCourierInThisDay(courier, order.getDay()))
-                .filter(courier -> !courier.equals(order.getCourier()))
+                .filter(courier -> order.getCourier() == null || !courier.getUsername().equals(order.getCourier().getUsername()))
                 .collect(Collectors.toList());
     }
 

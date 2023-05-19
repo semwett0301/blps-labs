@@ -56,8 +56,8 @@ public class TimePeriod {
     private boolean isFitForOrder(List<Order> orders) {
         boolean isAvailable = true;
         for (Order currentOrder : orders) {
-            if (currentOrder.getStartTime() <= this.getStart()
-                    && currentOrder.getEndTime() >= this.getStart()) {
+            if (currentOrder.getStartTime() < this.getStart()
+                    && currentOrder.getEndTime() > this.getStart()) {
                 isAvailable = false;
                 break;
             }

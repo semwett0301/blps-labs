@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,14 +16,15 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_info")
-public class UserInfo extends BaseEntity {
+public class UserInfo {
+    @Id
     @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "is_courier", nullable = false)
+    @Column(name = "role", nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user")

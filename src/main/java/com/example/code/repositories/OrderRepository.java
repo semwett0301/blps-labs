@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findAllByCourier(UUID courierId);
+    List<Order> findAllByCourier(UserInfo userInfo);
 
     List<Order> findAllByUser(UserInfo userInfo);
 }
