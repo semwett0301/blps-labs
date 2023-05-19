@@ -17,10 +17,10 @@ import javax.persistence.ManyToOne;
 public class Reservation extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "reserved_book_id")
     private Book reservedBook;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "order_number")
     private Order order;
 }

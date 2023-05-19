@@ -11,47 +11,47 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ControllerAdvisor {
     @ExceptionHandler(ConversionFailedException.class)
-    public ResponseEntity<String> handleConversionFailed(RuntimeException ex) {
+    public ResponseEntity<String> handleConversionFailed(ConversionFailedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(RuntimeException ex) {
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BookIsNotAvailableException.class)
-    public ResponseEntity<String> handleBookIsNotAvailable(RuntimeException ex) {
+    public ResponseEntity<String> handleBookIsNotAvailable(BookIsNotAvailableException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorrectTimePeriodException.class)
-    public ResponseEntity<String> handleIncorrectTimePeriod(RuntimeException ex) {
+    public ResponseEntity<String> handleIncorrectTimePeriod(IncorrectTimePeriodException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(OrderHasBeenAlreadyAcceptedException.class)
-    public ResponseEntity<String> handleOrderHasBeenAlreadyAccepted(RuntimeException ex) {
+    public ResponseEntity<String> handleOrderHasBeenAlreadyAccepted(OrderHasBeenAlreadyAcceptedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TimeIsNotAvailableException.class)
-    public ResponseEntity<String> handleTimeIsNotAvailable(RuntimeException ex) {
+    public ResponseEntity<String> handleTimeIsNotAvailable(TimeIsNotAvailableException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<String> handleOrderNotFound(RuntimeException ex) {
+    public ResponseEntity<String> handleOrderNotFound(OrderNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<String> handleTokenExpired(RuntimeException ex) {
+    public ResponseEntity<String> handleTokenExpired(TokenExpiredException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<String> handleUserAlreadyExist(RuntimeException ex) {
+    public ResponseEntity<String> handleUserAlreadyExist(UserAlreadyExistException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

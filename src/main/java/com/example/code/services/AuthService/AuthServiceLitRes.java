@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 
 @Service
 public class AuthServiceLitRes implements AuthService {
@@ -30,6 +32,7 @@ public class AuthServiceLitRes implements AuthService {
     }
 
     @Override
+    @Transactional
     public void register(RequestRegister requestRegister) {
         UserInfo newUserInfo = UserInfoMapper.INSTANCE.toUserInfo(requestRegister);
         newUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));

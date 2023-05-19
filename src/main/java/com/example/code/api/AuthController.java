@@ -15,8 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -65,7 +63,5 @@ public class AuthController {
                         TokenCookieUtils.createRefreshTokenResponseCookie(jwtUtils.createJWTRefreshToken(username)).toString())
                 .body(new ResponseUserAuthorized(role));
     }
-
-
 }
 

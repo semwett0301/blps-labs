@@ -10,12 +10,12 @@ import java.util.UUID;
 
 public interface DeliveryService {
 
-    List<ResponseOrder> getOrders(UUID userId) throws UserNotFoundException;
-    Order createOrder(int day, UUID userId) throws UserNotFoundException;
+    List<ResponseOrder> getOrders(String username) throws UserNotFoundException;
+    Order createOrder(int day, String username) throws UserNotFoundException;
     List<TimePeriod> findAvailableTimePeriods(int orderId) throws OrderNotFoundException, IncorrectTimePeriodException;
     void cancelOrder(int orderId) throws OrderNotFoundException;
 
-    void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException;
+    void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException;
 
     void unsetTimeForOrder(int orderIs) throws OrderNotFoundException;
 

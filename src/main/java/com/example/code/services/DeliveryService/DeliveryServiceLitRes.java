@@ -11,8 +11,10 @@ import com.example.code.model.modelUtils.TimePeriod;
 import com.example.code.repositories.OrderRepository;
 import com.example.code.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -31,14 +33,14 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public List<ResponseOrder> getOrders(UUID userId) throws UserNotFoundException {
-        UserInfo user = getUserById(userId);
+    public List<ResponseOrder> getOrders(String username) throws UserNotFoundException {
+        UserInfo user = getUserByUsername(username);
         return user.getRole().equals(Role.COURIER) ? getOrdersForCourier(user) : getOrdersForCustomer(user);
     }
 
     @Override
-    public Order createOrder(int day, UUID userId) throws UserNotFoundException {
-        UserInfo user = getUserById(userId);
+    public Order createOrder(int day, String username) throws UserNotFoundException {
+        UserInfo user = getUserByUsername(username);
         return createOrder(day, user);
     }
 
@@ -59,11 +61,14 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException {
+    @Transactional
+    public void setTimeForOrder(int orderId, TimePeriod timePeriod) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
         Order order = getOrderFromDatabase(orderId);
         order.setStartTime(timePeriod.getStart());
         order.setEndTime(timePeriod.getEnd());
         orderRepository.save(order);
+
+        choseCourierForOrder(orderId);
     }
 
     @Override
@@ -76,6 +81,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public void choseCourierForOrder(int orderId) throws OrderNotFoundException, TimeIsNotAvailableException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException {
         Order order = checkOrderNotAccepted(getOrderFromDatabase(orderId));
         List<UserInfo> fitCouriers = getAvailableCouriersForOrder(order);
@@ -104,7 +110,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     private Order checkOrderNotAccepted(Order order) throws OrderHasBeenAlreadyAcceptedException {
         if (order.isAccepted()) {
             throw new OrderHasBeenAlreadyAcceptedException();
-        } else  {
+        } else {
             return order;
         }
     }
@@ -131,12 +137,12 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     private List<ResponseOrder> getOrdersForCustomer(UserInfo user) {
-        return orderRepository.findAllByUser(user.getId()).stream()
+        return orderRepository.findAllByUser(user).stream()
                 .map(OrderMapper.INSTANCE::toResponseOrders)
                 .collect(Collectors.toList());
     }
 
-    private void setCourierForOrder(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
+    public void setCourierForOrder(List<UserInfo> fitCouriers, Order order) throws TimeIsNotAvailableException {
         if (fitCouriers.size() == 0) {
             throw new TimeIsNotAvailableException();
         } else {
@@ -152,7 +158,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
         return couriers.stream()
                 .filter(courier -> timePeriod.isAvailableForCourierInThisDay(courier, order.getDay()))
-                .filter(courier -> !courier.getId().equals(order.getCourier().getId()))
+                .filter(courier -> !courier.equals(order.getCourier()))
                 .collect(Collectors.toList());
     }
 
@@ -162,8 +168,8 @@ public class DeliveryServiceLitRes implements DeliveryService {
         return newOrder;
     }
 
-    private UserInfo getUserById(UUID userId) throws UserNotFoundException {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    private UserInfo getUserByUsername(String username) throws UserNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 
     private int getOrderDay(int orderId) throws OrderNotFoundException {

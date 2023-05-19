@@ -12,6 +12,8 @@ import com.example.code.services.DeliveryService.DeliveryService;
 import com.example.code.services.WarehouseService.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,13 +32,15 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<ResponseOrder> getOrders(@CookieValue(value = "user_id") UUID userId) throws UserNotFoundException {
-        return deliveryService.getOrders(userId);
+    public List<ResponseOrder> getOrders() throws UserNotFoundException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return deliveryService.getOrders(username);
     }
 
     @PostMapping
-    public ResponseCreateOrder createOrder(@RequestBody RequestCreateOrder requestCreateOrder, @CookieValue(name = "user_id") UUID userId) throws UserNotFoundException, BookIsNotAvailableException {
-        Order order = deliveryService.createOrder(requestCreateOrder.getDay(), userId);
+    public ResponseCreateOrder createOrder(@RequestBody RequestCreateOrder requestCreateOrder) throws UserNotFoundException, BookIsNotAvailableException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Order order = deliveryService.createOrder(requestCreateOrder.getDay(), username);
         warehouseService.reserveBooks(requestCreateOrder.getBooks(), order);
         return OrderMapper.INSTANCE.toResponseCreateOrder(order);
     }
@@ -48,14 +52,8 @@ public class OrderController {
 
     @PostMapping("/time/{orderId}")
     public TimePeriod setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
-        try {
-            deliveryService.setTimeForOrder(orderId, timePeriod);
-            deliveryService.choseCourierForOrder(orderId);
-            return timePeriod;
-        } catch (TimeIsNotAvailableException e) {
-            deliveryService.unsetTimeForOrder(orderId);
-            throw e;
-        }
+        deliveryService.setTimeForOrder(orderId, timePeriod);
+        return timePeriod;
     }
 
     @PostMapping("/acceptance/{orderId}")
@@ -65,12 +63,7 @@ public class OrderController {
 
     @DeleteMapping("/acceptance/{orderId}")
     public void declineOrder(@PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
-        try {
-            deliveryService.choseCourierForOrder(orderId);
-        } catch (TimeIsNotAvailableException e) {
-            deliveryService.unsetTimeForOrder(orderId);
-            throw e;
-        }
+        deliveryService.choseCourierForOrder(orderId);
     }
 
     @GetMapping("/{orderId}")
