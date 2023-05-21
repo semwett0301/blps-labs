@@ -49,16 +49,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers(PERMIT_ALL_PATHS).permitAll();
 
-        http.authorizeRequests().antMatchers("/orders/acceptance/**").hasAuthority(Role.COURIER.getRole());
-        http.authorizeRequests().antMatchers(PATCH, "/orders/*").hasAuthority(Role.COURIER.getRole());
+        http.authorizeRequests().antMatchers(POST, "/orders/*/accept").hasAuthority(Role.COURIER.getRole());
+        http.authorizeRequests().antMatchers(POST, "/orders/*/reject").hasAuthority(Role.COURIER.getRole());
+        http.authorizeRequests().antMatchers(POST, "/orders/*/complete").hasAuthority(Role.COURIER.getRole());
 
         http.authorizeRequests().antMatchers(POST, "/orders").hasAuthority(Role.USER.getRole());
-        http.authorizeRequests().antMatchers("/orders/time/**").hasAuthority(Role.USER.getRole());
+        http.authorizeRequests().antMatchers("/time/**").hasAuthority(Role.USER.getRole());
         http.authorizeRequests().antMatchers(GET, "/books").hasAuthority(Role.USER.getRole());
 
         http.authorizeRequests().antMatchers(GET, "/orders").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
         http.authorizeRequests().antMatchers(GET, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
-        http.authorizeRequests().antMatchers(DELETE, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
+        http.authorizeRequests().antMatchers(POST, "/orders/cancel").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
 
         http.addFilterAt(new AuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(new UpdateTokenFilter(jwtUtils), AuthorizationFilter.class);
