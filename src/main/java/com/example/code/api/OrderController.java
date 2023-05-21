@@ -42,23 +42,12 @@ public class OrderController {
         return OrderMapper.INSTANCE.toResponseCreateOrder(order);
     }
 
-    @GetMapping("/time/{orderId}")
-    public ResponseAvailableTime getAvailableTime(@PathVariable Integer orderId) throws OrderNotFoundException, IncorrectTimePeriodException {
-        return new ResponseAvailableTime(deliveryService.findAvailableTimePeriods(orderId));
-    }
-
-    @PostMapping("/time/{orderId}")
-    public TimePeriod setTimeForOrder(@RequestBody TimePeriod timePeriod, @PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException, TimeHasBeenAlreadyChosenException {
-        deliveryService.setTimeForOrder(orderId, timePeriod);
-        return timePeriod;
-    }
-
-    @PostMapping("/acceptance/{orderId}")
+    @PostMapping("/{orderId}/acceptance")
     public void acceptOrder(@PathVariable int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
         deliveryService.acceptOrder(orderId);
     }
 
-    @DeleteMapping("/acceptance/{orderId}")
+    @PostMapping("/{orderId}/reject")
     public void declineOrder(@PathVariable int orderId) throws OrderNotFoundException, IncorrectTimePeriodException, OrderHasBeenAlreadyAcceptedException, TimeIsNotAvailableException {
         deliveryService.choseCourierForOrder(orderId);
     }
@@ -68,7 +57,7 @@ public class OrderController {
         return deliveryService.getOrder(orderId);
     }
 
-    @PatchMapping("/{orderId}") //
+    @PostMapping("/{orderId}/complete") //
     public void completeOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
         deliveryService.completeOrder(orderId);
     }
