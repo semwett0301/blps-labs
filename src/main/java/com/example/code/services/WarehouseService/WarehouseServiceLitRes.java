@@ -43,7 +43,7 @@ public class WarehouseServiceLitRes implements WarehouseService {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class, value = Transactional.TxType.REQUIRES_NEW)
+    @Transactional(rollbackOn = Exception.class)
     public void reserveBooks(List<ReservedBook> reservedBook, Order order) throws BookIsNotAvailableException {
         List<BookReservation> bookReservations = createBookReservationList(reservedBook);
         decreaseAvailableAmountOfBooks(bookReservations);
