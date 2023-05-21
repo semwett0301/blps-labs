@@ -42,7 +42,7 @@ public class OrderController {
         return OrderMapper.INSTANCE.toResponseCreateOrder(order);
     }
 
-    @PostMapping("/{orderId}/acceptance")
+    @PostMapping("/{orderId}/accept")
     public void acceptOrder(@PathVariable int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
         deliveryService.acceptOrder(orderId);
     }
@@ -62,7 +62,7 @@ public class OrderController {
         deliveryService.completeOrder(orderId);
     }
 
-    @DeleteMapping("/{orderId}") //
+    @PostMapping("/{orderId}/cancel") //
     public void cancelOrder(@PathVariable Integer orderId) throws OrderNotFoundException {
         deliveryService.cancelOrder(orderId);
     }
