@@ -1,11 +1,10 @@
 package com.example.code.services.WarehouseService;
 
-import com.example.code.model.dto.response.ResponseAvailableBook;
+import com.example.code.model.dto.web.response.ResponseAvailableBook;
 import com.example.code.model.entities.Book;
 import com.example.code.model.entities.Order;
 import com.example.code.model.entities.Reservation;
 import com.example.code.model.exceptions.BookIsNotAvailableException;
-import com.example.code.model.exceptions.UserNotFoundException;
 import com.example.code.model.mappers.BookMapper;
 import com.example.code.model.modelUtils.ReservedBook;
 import com.example.code.repositories.BookRepository;

@@ -1,6 +1,6 @@
 package com.example.code.api;
 
-import com.example.code.model.dto.response.ResponseAvailableTime;
+import com.example.code.model.dto.web.response.ResponseAvailableTime;
 import com.example.code.model.exceptions.*;
 import com.example.code.model.modelUtils.TimePeriod;
 import com.example.code.services.DeliveryService.DeliveryService;

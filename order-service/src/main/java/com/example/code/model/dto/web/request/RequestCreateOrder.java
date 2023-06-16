@@ -1,4 +1,4 @@
-package com.example.code.model.dto.request;
+package com.example.code.model.dto.web.request;
 
 import com.example.code.model.modelUtils.ReservedBook;
 import lombok.AllArgsConstructor;

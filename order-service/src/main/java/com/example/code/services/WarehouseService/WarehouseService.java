@@ -1,6 +1,6 @@
 package com.example.code.services.WarehouseService;
 
-import com.example.code.model.dto.response.ResponseAvailableBook;
+import com.example.code.model.dto.web.response.ResponseAvailableBook;
 import com.example.code.model.entities.Order;
 import com.example.code.model.exceptions.BookIsNotAvailableException;
 import com.example.code.model.exceptions.UserNotFoundException;

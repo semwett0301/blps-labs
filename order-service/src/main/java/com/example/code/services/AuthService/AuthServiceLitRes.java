@@ -1,9 +1,8 @@
 package com.example.code.services.AuthService;
 
-import com.example.code.model.dto.request.RequestRegister;
+import com.example.code.model.dto.web.request.RequestRegister;
 import com.example.code.model.entities.UserInfo;
 import com.example.code.model.exceptions.UserAlreadyExistException;
-import com.example.code.model.exceptions.UserNotFoundException;
 import com.example.code.model.mappers.UserInfoMapper;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.repositories.UserRepository;

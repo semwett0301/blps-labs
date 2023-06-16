@@ -2,9 +2,9 @@ package com.example.code.api;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.code.model.dto.request.RequestLogIn;
-import com.example.code.model.dto.request.RequestRegister;
-import com.example.code.model.dto.response.ResponseUserAuthorized;
+import com.example.code.model.dto.web.request.RequestLogIn;
+import com.example.code.model.dto.web.request.RequestRegister;
+import com.example.code.model.dto.web.response.ResponseUserAuthorized;
 import com.example.code.model.exceptions.UserAlreadyExistException;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.security.utils.CookieUtils.TokenCookieUtils;

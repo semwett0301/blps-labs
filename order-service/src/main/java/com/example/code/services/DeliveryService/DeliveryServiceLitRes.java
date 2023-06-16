@@ -1,6 +1,6 @@
 package com.example.code.services.DeliveryService;
 
-import com.example.code.model.dto.response.ResponseOrder;
+import com.example.code.model.dto.web.response.ResponseOrder;
 import com.example.code.model.entities.Order;
 import com.example.code.model.entities.UserInfo;
 import com.example.code.model.exceptions.*;
@@ -17,7 +17,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;

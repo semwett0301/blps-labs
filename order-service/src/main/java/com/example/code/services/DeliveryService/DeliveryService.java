@@ -1,13 +1,12 @@
 package com.example.code.services.DeliveryService;
 
-import com.example.code.model.dto.response.ResponseOrder;
+import com.example.code.model.dto.web.response.ResponseOrder;
 import com.example.code.model.entities.Order;
 import com.example.code.model.exceptions.*;
 import com.example.code.model.modelUtils.ReservedBook;
 import com.example.code.model.modelUtils.TimePeriod;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface DeliveryService {
 

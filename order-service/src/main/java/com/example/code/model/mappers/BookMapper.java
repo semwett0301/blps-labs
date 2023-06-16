@@ -1,6 +1,6 @@
 package com.example.code.model.mappers;
 
-import com.example.code.model.dto.response.ResponseAvailableBook;
+import com.example.code.model.dto.web.response.ResponseAvailableBook;
 import com.example.code.model.entities.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

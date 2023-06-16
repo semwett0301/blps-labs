@@ -1,7 +1,7 @@
 package com.example.code.model.mappers;
 
-import com.example.code.model.dto.request.RequestRegister;
-import com.example.code.model.dto.response.ResponseUserAuthorized;
+import com.example.code.model.dto.web.request.RequestRegister;
+import com.example.code.model.dto.web.response.ResponseUserAuthorized;
 import com.example.code.model.entities.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
