@@ -27,6 +27,12 @@ public class UserInfo {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "is_notificated", nullable = false, columnDefinition = "BOOL DEFAULT FALSE")
+    private boolean isNotificated;
+
     @OneToMany(mappedBy = "user")
     private List<Order> ownOrders;
 

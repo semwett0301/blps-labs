@@ -1,5 +1,6 @@
 package com.example.code.model.mappers;
 
+import com.example.code.model.dto.kafka.OrderDTO;
 import com.example.code.model.dto.web.response.ResponseCreateOrder;
 import com.example.code.model.dto.web.response.ResponseOrder;
 import com.example.code.model.entities.Order;
@@ -13,4 +14,6 @@ public interface OrderMapper {
     ResponseCreateOrder toResponseCreateOrder(Order order);
 
     ResponseOrder toResponseOrders(Order order);
+
+    OrderDTO toOrderDTO(Order order);
 }
