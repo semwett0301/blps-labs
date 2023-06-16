@@ -1,8 +1,10 @@
 package com.example.mailservice.model.modelUtils;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum KafkaTopics {
     ORDER_TOPIC("order-topic");
 

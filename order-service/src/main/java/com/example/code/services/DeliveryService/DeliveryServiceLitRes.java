@@ -14,6 +14,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -109,11 +110,17 @@ public class DeliveryServiceLitRes implements DeliveryService {
         sendOrder(order);
     }
 
+    private OrderDTO getOrderDTO(Order order) {
+        OrderDTO orderDTO = OrderMapper.INSTANCE.toOrderDTO(order);
+        orderDTO.setUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return orderDTO;
+    }
+
     private void sendOrder(Order order) {
         ProducerRecord<String, OrderDTO> record = new ProducerRecord<>(
                 KafkaTopics.ORDER_TOPIC.toString(),
                 String.valueOf(order.getNumber()),
-                OrderMapper.INSTANCE.toOrderDTO(order)
+                getOrderDTO(order)
         );
 
         producer.send(record, (recordMetadata, e) -> {
