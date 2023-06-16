@@ -1,7 +1,6 @@
-package com.example.mailservice.model.dto.kafka;
+package com.example.code.model.dto.kafka;
 
-
-import com.example.mailservice.model.modelUtils.OrderStatus;
+import com.example.code.model.modelUtils.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
