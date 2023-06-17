@@ -1,8 +1,8 @@
 package com.example.mailservice.services.NotificationService;
 
-import com.example.mailservice.model.dto.kafka.OrderDTO;
 import com.example.mailservice.model.exceptions.UserNotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface NotificationService {
-    void sendNotification(OrderDTO orderDTO) throws UserNotFoundException;
+    void sendNotification(String orderDTOString) throws UserNotFoundException, JsonProcessingException;
 }

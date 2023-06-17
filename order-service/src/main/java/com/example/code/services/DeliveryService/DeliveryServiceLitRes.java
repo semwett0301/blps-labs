@@ -6,10 +6,15 @@ import com.example.code.model.entities.Order;
 import com.example.code.model.entities.UserInfo;
 import com.example.code.model.exceptions.*;
 import com.example.code.model.mappers.OrderMapper;
-import com.example.code.model.modelUtils.*;
+import com.example.code.model.modelUtils.OrderStatus;
+import com.example.code.model.modelUtils.ReservedBook;
+import com.example.code.model.modelUtils.Role;
+import com.example.code.model.modelUtils.TimePeriod;
 import com.example.code.repositories.OrderRepository;
 import com.example.code.repositories.UserRepository;
 import com.example.code.services.WarehouseService.WarehouseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +52,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Order createOrder(int day, List<ReservedBook> books, String username) throws UserNotFoundException, BookIsNotAvailableException {
+    public Order createOrder(int day, List<ReservedBook> books, String username) throws UserNotFoundException, BookIsNotAvailableException, JsonProcessingException {
         UserInfo user = getUserByUsername(username);
         Order order = createOrder(day, user);
         warehouseService.reserveBooks(books, order);
@@ -65,7 +70,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void cancelOrder(int orderId) throws OrderNotFoundException {
+    public void cancelOrder(int orderId) throws OrderNotFoundException, JsonProcessingException {
         Order order = getOrderSafety(orderId);
         saveOrder(order, OrderStatus.CANCELED, null);
         warehouseService.removeReservation(orderId);
@@ -95,7 +100,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
     }
 
     @Override
-    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException {
+    public void acceptOrder(int orderId) throws OrderNotFoundException, OrderHasBeenAlreadyAcceptedException, JsonProcessingException {
         Order order = getOrderSafety(orderId);
         saveOrder(order.validateNotAccepted(), OrderStatus.IN_PROCESS);
         sendOrder(order);
@@ -103,7 +108,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void completeOrder(int orderId) throws OrderNotFoundException {
+    public void completeOrder(int orderId) throws OrderNotFoundException, JsonProcessingException {
         Order order = getOrderSafety(orderId);
         saveOrder(getOrderSafety(orderId), OrderStatus.DONE);
         warehouseService.removeReservation(orderId);
@@ -118,13 +123,13 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     private void sendOrder(Order order) {
         ProducerRecord<String, OrderDTO> record = new ProducerRecord<>(
-                KafkaTopics.ORDER_TOPIC.toString(),
+                "order-topic",
                 String.valueOf(order.getNumber()),
                 getOrderDTO(order)
         );
 
         producer.send(record, (recordMetadata, e) -> {
-            e.printStackTrace();
+            if (e != null) e.printStackTrace();
         });
     }
 

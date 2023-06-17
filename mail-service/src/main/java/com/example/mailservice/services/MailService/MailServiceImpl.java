@@ -32,7 +32,8 @@ public class MailServiceImpl implements MailService {
     @Async
     public void send(String to, String message) {
         try {
-            javaMailSender.send(createMessage(to, message));
+            MimeMessage mimeMessage = createMessage(to, message);
+            javaMailSender.send(mimeMessage);
         } catch (MessagingException | MailSendException e) {
             throw new IllegalStateException("Failed to send email to " + to);
         }

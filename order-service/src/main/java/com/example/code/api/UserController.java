@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
 
-    private final String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
     private final UserService userService;
 
     @Autowired
@@ -23,11 +21,13 @@ public class UserController {
 
     @PostMapping("/allow-notification")
     public void allowNotification() throws UserNotFoundException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userService.allowNotification(username);
     }
 
     @PostMapping("/forbid-notification")
     public void forbidNotification() throws UserNotFoundException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userService.forbidNotification(username);
     }
 }
