@@ -61,6 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/orders/*").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
         http.authorizeRequests().antMatchers(POST, "/orders/cancel").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
 
+        http.authorizeRequests().antMatchers(POST, "/users/**").hasAnyAuthority(Role.COURIER.getRole(), Role.USER.getRole());
+
         http.addFilterAt(new AuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(new UpdateTokenFilter(jwtUtils), AuthorizationFilter.class);
     }
