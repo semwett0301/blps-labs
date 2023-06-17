@@ -5,4 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface NotificationService {
     void sendNotification(String orderDTOString) throws UserNotFoundException, JsonProcessingException;
+
+    void broadcast();
 }
