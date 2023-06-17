@@ -56,7 +56,7 @@ public class NotificationServiceMail implements NotificationService {
                 if (usersToMessages.get(email) == null) {
                     usersToMessages.put(email, orderDTO.toEmail());
                 } else {
-                    usersToMessages.put(email, usersToMessages.get(orderDTO.getUsername()) + orderDTO.toEmail());
+                    usersToMessages.put(email, usersToMessages.get(email) + orderDTO.toEmail());
                 }
             }
         });

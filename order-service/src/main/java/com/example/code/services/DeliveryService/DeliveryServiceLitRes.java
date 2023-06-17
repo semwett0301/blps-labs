@@ -14,7 +14,6 @@ import com.example.code.repositories.OrderRepository;
 import com.example.code.repositories.UserRepository;
 import com.example.code.services.WarehouseService.WarehouseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
