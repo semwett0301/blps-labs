@@ -199,6 +199,7 @@ public class DeliveryServiceLitRes implements DeliveryService {
         order.setCourier(fitCouriers.get(new Random().nextInt(fitCouriers.size())));
         order.setOrderStatus(OrderStatus.ON_APPROVE);
         orderRepository.save(order);
+        sendOrder(order);
     }
 
     private List<UserInfo> getAvailableCouriersForOrder(Order order) throws IncorrectTimePeriodException {
