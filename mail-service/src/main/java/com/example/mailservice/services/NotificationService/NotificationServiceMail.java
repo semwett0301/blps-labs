@@ -49,11 +49,15 @@ public class NotificationServiceMail implements NotificationService {
 
         ordersMap.keySet().forEach(a -> {
             OrderDTO orderDTO = ordersMap.get(a);
-            String email = userRepository.findByUsername(orderDTO.getUsername()).orElseThrow().getEmail();
-            if (usersToMessages.get(email) == null) {
-                usersToMessages.put(email, orderDTO.toEmail());
-            } else {
-                usersToMessages.put(email, usersToMessages.get(orderDTO.getUsername()) + orderDTO.toEmail());
+            UserInfo userInfo = userRepository.findByUsername(orderDTO.getUsername()).orElseThrow();
+            if (userInfo.isNotificated()) {
+                String email = userInfo.getEmail();
+
+                if (usersToMessages.get(email) == null) {
+                    usersToMessages.put(email, orderDTO.toEmail());
+                } else {
+                    usersToMessages.put(email, usersToMessages.get(orderDTO.getUsername()) + orderDTO.toEmail());
+                }
             }
         });
 
