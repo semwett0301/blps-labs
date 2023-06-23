@@ -8,7 +8,7 @@
         "columns": null
       },
       "id": "Field_02tecox",
-      "key": "field_0m0djtk"
+      "key": "login"
     },
     {
       "label": "Password",
@@ -18,11 +18,41 @@
         "columns": null
       },
       "id": "Field_0oq3bun",
-      "key": "field_0y6ziee"
+      "key": "password"
+    },
+    {
+      "label": "Email",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0pgohw7",
+        "columns": null
+      },
+      "id": "Field_1d1hpb4",
+      "key": "email"
+    },
+    {
+      "values": [
+        {
+          "label": "USER",
+          "value": "USER"
+        },
+        {
+          "label": "COURIER",
+          "value": "COURIER"
+        }
+      ],
+      "label": "Role",
+      "type": "select",
+      "layout": {
+        "row": "Row_1rgmgh4",
+        "columns": null
+      },
+      "id": "Field_1chxfuy",
+      "key": "role"
     },
     {
       "action": "submit",
-      "label": "Rgister",
+      "label": "Register",
       "type": "button",
       "layout": {
         "row": "Row_1sab4vd",
