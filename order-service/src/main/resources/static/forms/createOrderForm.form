@@ -1,0 +1,43 @@
+{
+  "components": [
+    {
+      "label": "BookId",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0de409x",
+        "columns": null
+      },
+      "id": "Field_0wcpfrq",
+      "key": "field_1c056qe"
+    },
+    {
+      "label": "Amount",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1kzpans",
+        "columns": null
+      },
+      "id": "Field_1gji4e8",
+      "key": "field_0qxt4l2"
+    },
+    {
+      "label": "day",
+      "type": "number",
+      "layout": {
+        "row": "Row_19wnpmt",
+        "columns": null
+      },
+      "id": "Field_1dg53ja",
+      "key": "field_1x2gwkm"
+    }
+  ],
+  "type": "default",
+  "id": "CreateOrderForm",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "schemaVersion": 9
+}

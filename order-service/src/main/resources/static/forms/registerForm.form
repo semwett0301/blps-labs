@@ -1,0 +1,44 @@
+{
+  "components": [
+    {
+      "label": "Login",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_139scrn",
+        "columns": null
+      },
+      "id": "Field_02tecox",
+      "key": "field_0m0djtk"
+    },
+    {
+      "label": "Password",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_02bb9q3",
+        "columns": null
+      },
+      "id": "Field_0oq3bun",
+      "key": "field_0y6ziee"
+    },
+    {
+      "action": "submit",
+      "label": "Rgister",
+      "type": "button",
+      "layout": {
+        "row": "Row_1sab4vd",
+        "columns": null
+      },
+      "id": "Field_0tr32o7",
+      "key": "field_0spioe5"
+    }
+  ],
+  "type": "default",
+  "id": "RegisterForm",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "schemaVersion": 9
+}
