@@ -19,4 +19,6 @@ public class RequestRegister implements Serializable {
     private String password;
 
     private Role role;
+
+    private String email;
 }
