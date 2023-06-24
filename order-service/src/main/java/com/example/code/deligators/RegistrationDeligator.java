@@ -23,9 +23,9 @@ public class RegistrationDeligator implements JavaDelegate {
         String username = (String) delegateExecution.getVariable("username");
         String password = (String) delegateExecution.getVariable("password");
         String email = (String) delegateExecution.getVariable("email");
-        Role role = (Role) delegateExecution.getVariable("role");
+        String roleString = (String) delegateExecution.getVariable("role");
 
         authService.checkUserExist(username);
-        authService.register(new RequestRegister(username, password, role, email));
+        authService.register(new RequestRegister(username, password, Role.valueOf(roleString), email));
     }
 }

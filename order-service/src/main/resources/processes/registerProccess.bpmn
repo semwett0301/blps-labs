@@ -17,11 +17,12 @@
     <bpmn:startEvent id="StartEvent_1" name="Open registration page">
       <bpmn:outgoing>Flow_0fnjdcj</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Activity_08rwxir" name="Fill register form" camunda:formRef="../static/forms/registerForm.form" camunda:formRefBinding="latest">
+    <bpmn:userTask id="Activity_08rwxir" name="Fill register form" camunda:formKey="camunda-forms:/forms/registerForm.form">
+      <bpmn:extensionElements />
       <bpmn:incoming>Flow_0fnjdcj</bpmn:incoming>
       <bpmn:outgoing>Flow_1bd88ka</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_04qsu7j" name="Register user" camunda:class="RegistrationDeligator">
+    <bpmn:serviceTask id="Activity_04qsu7j" name="Register user" camunda:class="com.example.code.deligators.RegistrationDeligator">
       <bpmn:incoming>Flow_1bd88ka</bpmn:incoming>
       <bpmn:outgoing>Flow_0gobea1</bpmn:outgoing>
     </bpmn:serviceTask>

@@ -1,14 +1,14 @@
 {
   "components": [
     {
-      "label": "Login",
+      "label": "Username",
       "type": "textfield",
       "layout": {
         "row": "Row_139scrn",
         "columns": null
       },
       "id": "Field_02tecox",
-      "key": "login"
+      "key": "username"
     },
     {
       "label": "Password",

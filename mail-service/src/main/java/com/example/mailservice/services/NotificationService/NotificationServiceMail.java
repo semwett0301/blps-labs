@@ -43,7 +43,7 @@ public class NotificationServiceMail implements NotificationService {
     }
 
     @Override
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(fixedRate = 60 * 1000 * 10000)
     public void broadcast() {
         Map<String, String> usersToMessages = new HashMap<>();
 
