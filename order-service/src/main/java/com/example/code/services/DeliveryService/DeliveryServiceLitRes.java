@@ -15,14 +15,15 @@ import com.example.code.repositories.UserRepository;
 import com.example.code.services.WarehouseService.WarehouseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -33,14 +34,11 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     private final WarehouseService warehouseService;
 
-    private Producer<String, OrderDTO> producer;
-
     @Autowired
     public DeliveryServiceLitRes(UserRepository userRepository, OrderRepository orderRepository, WarehouseService warehouseService, Producer<String, OrderDTO> producer) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.warehouseService = warehouseService;
-        this.producer = producer;
     }
 
     @Override
@@ -120,16 +118,10 @@ public class DeliveryServiceLitRes implements DeliveryService {
         return orderDTO;
     }
 
-    private void sendOrder(Order order) {
-        ProducerRecord<String, OrderDTO> record = new ProducerRecord<>(
-                "order-topic",
-                String.valueOf(order.getNumber()),
-                getOrderDTO(order)
-        );
+    public Map<Integer, Order> ordersMap = new HashMap<>();
 
-        producer.send(record, (recordMetadata, e) -> {
-            if (e != null) e.printStackTrace();
-        });
+    private void sendOrder(Order order) {
+        ordersMap.put(order.getNumber(), order);
     }
 
     private void saveOrder(Order order, OrderStatus orderStatus) {
