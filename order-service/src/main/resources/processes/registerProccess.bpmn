@@ -13,12 +13,12 @@
         <bpmn:flowNodeRef>Activity_04qsu7j</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_11ugazs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_15w9tmt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1fet86w</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:userTask id="Activity_08rwxir" name="Fill register form" camunda:formKey="camunda-forms:/forms/registerForm.form">
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_0fnjdcj</bpmn:incoming>
-      <bpmn:incoming>Flow_1f6uos9</bpmn:incoming>
       <bpmn:outgoing>Flow_1bd88ka</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Activity_04qsu7j" name="Register user" camunda:class="com.example.code.deligators.RegistrationDeligator">
@@ -38,7 +38,7 @@
       <bpmn:extensionElements>
         <camunda:executionListener class="com.example.code.model.exceptions.UserAlreadyExistException" event="start" />
       </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_1f6uos9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_09awxyw</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1hbwka5" errorRef="Error_0ktimaj" camunda:errorCodeVariable="errCode" camunda:errorMessageVariable="message" />
     </bpmn:boundaryEvent>
     <bpmn:startEvent id="StartEvent_1" name="Open registration page">
@@ -47,7 +47,10 @@
     <bpmn:dataStoreReference id="DataStoreReference_0txyj8w" name="postgre">
       <bpmn:extensionElements />
     </bpmn:dataStoreReference>
-    <bpmn:sequenceFlow id="Flow_1f6uos9" sourceRef="Event_11ugazs" targetRef="Activity_08rwxir" />
+    <bpmn:endEvent id="Event_1fet86w" name="User isn&#39;t registered">
+      <bpmn:incoming>Flow_09awxyw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09awxyw" sourceRef="Event_11ugazs" targetRef="Event_1fet86w" />
   </bpmn:process>
   <bpmn:error id="Error_0ktimaj" name="USER_ALREADY_EXIST" errorCode="406" camunda:errorMessage="User already exist" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -84,6 +87,12 @@
           <dc:Bounds x="258" y="235" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fet86w_di" bpmnElement="Event_1fet86w">
+        <dc:Bounds x="282" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="276" y="382" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataStoreReference_0txyj8w_di" bpmnElement="DataStoreReference_0txyj8w">
         <dc:Bounds x="535" y="315" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -108,12 +117,10 @@
         <di:waypoint x="500" y="430" />
         <di:waypoint x="632" y="430" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1f6uos9_di" bpmnElement="Flow_1f6uos9">
+      <bpmndi:BPMNEdge id="Flow_09awxyw_di" bpmnElement="Flow_09awxyw">
         <di:waypoint x="382" y="470" />
-        <di:waypoint x="362" y="470" />
-        <di:waypoint x="362" y="360" />
-        <di:waypoint x="410" y="360" />
-        <di:waypoint x="410" y="250" />
+        <di:waypoint x="300" y="470" />
+        <di:waypoint x="300" y="448" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="DataOutputAssociation_0j2knqp_di" bpmnElement="DataOutputAssociation_0j2knqp">
         <di:waypoint x="495" y="391" />
