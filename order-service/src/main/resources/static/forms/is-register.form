@@ -1,0 +1,23 @@
+{
+  "components": [
+    {
+      "label": "Есть аккаунт?",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_0vg3zq7",
+        "columns": null
+      },
+      "id": "Field_0q6eu2i",
+      "key": "isRegister"
+    }
+  ],
+  "type": "default",
+  "id": "isRegisterForm",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.11.0"
+  },
+  "schemaVersion": 8
+}
