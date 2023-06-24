@@ -34,11 +34,18 @@ public class DeliveryServiceLitRes implements DeliveryService {
 
     private final WarehouseService warehouseService;
 
+    private Map<Integer, Order> ordersMap;
+
+    public Map<Integer, Order> getOrdersMap() {
+        return ordersMap;
+    }
+
     @Autowired
     public DeliveryServiceLitRes(UserRepository userRepository, OrderRepository orderRepository, WarehouseService warehouseService, Producer<String, OrderDTO> producer) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.warehouseService = warehouseService;
+        this.ordersMap = new HashMap<>();
     }
 
     @Override
@@ -117,8 +124,6 @@ public class DeliveryServiceLitRes implements DeliveryService {
         orderDTO.setUsername((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return orderDTO;
     }
-
-    public Map<Integer, Order> ordersMap = new HashMap<>();
 
     private void sendOrder(Order order) {
         ordersMap.put(order.getNumber(), order);

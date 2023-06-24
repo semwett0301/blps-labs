@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0tz93or" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:collaboration id="Collaboration_0w2kky5">
+    <bpmn:participant id="Participant_1xg7vx6" name="Broadcast process" processRef="Process_18zv7nl" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_18zv7nl" name="Broadcast" isExecutable="true">
+    <bpmn:serviceTask id="Activity_09c07q5" name="Notify users" camunda:class="com.example.code.deligators.BroadcastDelegator">
+      <bpmn:incoming>Flow_19uldp3</bpmn:incoming>
+      <bpmn:outgoing>Flow_022cllm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="Event_1mvbkkt" name="every 10s">
+      <bpmn:incoming>Flow_19bjbxn</bpmn:incoming>
+      <bpmn:incoming>Flow_022cllm</bpmn:incoming>
+      <bpmn:outgoing>Flow_19uldp3</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0xfiq04">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R5/PT10S</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:startEvent id="Event_1mr261n" name="Start broadcast">
+      <bpmn:outgoing>Flow_19bjbxn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_19bjbxn" sourceRef="Event_1mr261n" targetRef="Event_1mvbkkt" />
+    <bpmn:sequenceFlow id="Flow_19uldp3" sourceRef="Event_1mvbkkt" targetRef="Activity_09c07q5" />
+    <bpmn:sequenceFlow id="Flow_022cllm" sourceRef="Activity_09c07q5" targetRef="Event_1mvbkkt" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0w2kky5">
+      <bpmndi:BPMNShape id="Participant_1xg7vx6_di" bpmnElement="Participant_1xg7vx6" isHorizontal="true">
+        <dc:Bounds x="160" y="79" width="600" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17przck" bpmnElement="Activity_09c07q5">
+        <dc:Bounds x="490" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ybkhlz_di" bpmnElement="Event_1mvbkkt">
+        <dc:Bounds x="352" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="346" y="215" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mr261n_di" bpmnElement="Event_1mr261n">
+        <dc:Bounds x="242" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="222" y="215" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_19bjbxn_di" bpmnElement="Flow_19bjbxn">
+        <di:waypoint x="278" y="190" />
+        <di:waypoint x="352" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19uldp3_di" bpmnElement="Flow_19uldp3">
+        <di:waypoint x="388" y="190" />
+        <di:waypoint x="490" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_022cllm_di" bpmnElement="Flow_022cllm">
+        <di:waypoint x="490" y="190" />
+        <di:waypoint x="388" y="190" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

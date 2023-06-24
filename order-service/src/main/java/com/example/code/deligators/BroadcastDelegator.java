@@ -42,10 +42,11 @@ public class BroadcastDelegator implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
+        System.out.println("BR");
+
         Map<String, String> usersToMessages = new HashMap<>();
-        Map<Integer, Order> ordersMap = deliveryServiceLitRes.ordersMap;
-        ordersMap.keySet().forEach(a -> {
-            Order orderDTO = ordersMap.get(a);
+        deliveryServiceLitRes.getOrdersMap().keySet().forEach(a -> {
+            Order orderDTO = deliveryServiceLitRes.getOrdersMap().get(a);
             UserInfo userInfo = userRepository.findByUsername(orderDTO.getUser().getUsername()).orElseThrow();
             if (userInfo.isNotificated()) {
                 String email = userInfo.getEmail();
