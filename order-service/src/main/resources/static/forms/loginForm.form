@@ -1,14 +1,14 @@
 {
   "components": [
     {
-      "label": "Login",
+      "label": "Username",
       "type": "textfield",
       "layout": {
         "row": "Row_01evk17",
         "columns": null
       },
       "id": "Field_0jtjvqz",
-      "key": "field_1ycam4c"
+      "key": "username"
     },
     {
       "label": "Password",
@@ -18,7 +18,7 @@
         "columns": null
       },
       "id": "Field_0vdvsim",
-      "key": "field_1f36f57"
+      "key": "password"
     },
     {
       "action": "submit",
