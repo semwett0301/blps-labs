@@ -12,6 +12,8 @@
       <bpmn:lane id="Lane_0uc7a4f">
         <bpmn:flowNodeRef>Activity_04qsu7j</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_15w9tmt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1fet86w</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_11ugazs</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_1" name="Open registration page">
@@ -26,13 +28,25 @@
       <bpmn:incoming>Flow_1bd88ka</bpmn:incoming>
       <bpmn:outgoing>Flow_0gobea1</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_15w9tmt">
+    <bpmn:endEvent id="Event_15w9tmt" name="User registered">
       <bpmn:incoming>Flow_0gobea1</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0fnjdcj" sourceRef="StartEvent_1" targetRef="Activity_08rwxir" />
     <bpmn:sequenceFlow id="Flow_1bd88ka" sourceRef="Activity_08rwxir" targetRef="Activity_04qsu7j" />
     <bpmn:sequenceFlow id="Flow_0gobea1" sourceRef="Activity_04qsu7j" targetRef="Event_15w9tmt" />
+    <bpmn:endEvent id="Event_1fet86w" name="User isn&#39;t registered">
+      <bpmn:incoming>Flow_09awxyw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_11ugazs" name="User already exist" attachedToRef="Activity_04qsu7j">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.code.model.exceptions.UserAlreadyExistException" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_09awxyw</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1hbwka5" errorRef="Error_0ktimaj" camunda:errorCodeVariable="errCode" camunda:errorMessageVariable="message" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_09awxyw" sourceRef="Event_11ugazs" targetRef="Event_1fet86w" />
   </bpmn:process>
+  <bpmn:error id="Error_0ktimaj" name="USER_ALREADY_EXIST" errorCode="406" camunda:errorMessage="User already exist" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1l1qdh6">
       <bpmndi:BPMNShape id="Participant_15q2ucz_di" bpmnElement="Participant_15q2ucz" isHorizontal="true">
@@ -61,6 +75,21 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_15w9tmt_di" bpmnElement="Event_15w9tmt">
         <dc:Bounds x="632" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="612" y="455" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fet86w_di" bpmnElement="Event_1fet86w">
+        <dc:Bounds x="252" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="246" y="382" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11ugazs_di" bpmnElement="Event_11ugazs">
+        <dc:Bounds x="382" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="355" y="493" width="89" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0fnjdcj_di" bpmnElement="Flow_0fnjdcj">
         <di:waypoint x="288" y="210" />
@@ -73,6 +102,11 @@
       <bpmndi:BPMNEdge id="Flow_0gobea1_di" bpmnElement="Flow_0gobea1">
         <di:waypoint x="500" y="430" />
         <di:waypoint x="632" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09awxyw_di" bpmnElement="Flow_09awxyw">
+        <di:waypoint x="382" y="470" />
+        <di:waypoint x="270" y="470" />
+        <di:waypoint x="270" y="448" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

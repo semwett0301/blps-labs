@@ -1,8 +1,10 @@
 package com.example.code.deligators;
 
 import com.example.code.model.dto.web.request.RequestRegister;
+import com.example.code.model.exceptions.UserAlreadyExistException;
 import com.example.code.model.modelUtils.Role;
 import com.example.code.services.AuthService.AuthService;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,11 @@ public class RegistrationDeligator implements JavaDelegate {
         String email = (String) delegateExecution.getVariable("email");
         String roleString = (String) delegateExecution.getVariable("role");
 
-        authService.checkUserExist(username);
-        authService.register(new RequestRegister(username, password, Role.valueOf(roleString), email));
+        try {
+            authService.checkUserExist(username);
+            authService.register(new RequestRegister(username, password, Role.valueOf(roleString), email));
+        } catch (UserAlreadyExistException e) {
+            throw new BpmnError("USER_ALREADY_EXIST");
+        }
     }
 }
