@@ -1,7 +1,9 @@
 package com.example.code.services.UserService;
 
+import com.example.code.model.dto.web.response.ResponseUserAuthorized;
 import com.example.code.model.entities.UserInfo;
 import com.example.code.model.exceptions.UserNotFoundException;
+import com.example.code.model.mappers.UserInfoMapper;
 import com.example.code.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,11 @@ public class UserServiceLitRes implements UserService{
     @Autowired
     public UserServiceLitRes(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserInfo getUser(String username) throws UserNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 
     @Override

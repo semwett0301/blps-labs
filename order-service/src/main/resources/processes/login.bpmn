@@ -10,6 +10,8 @@
         <bpmn:flowNodeRef>Gateway_0pok7qs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0wrygsr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ghwdwp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_11g64ak</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0wiujh3</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_10a81f1" name="AuthService">
         <bpmn:flowNodeRef>Activity_1frebzv</bpmn:flowNodeRef>
@@ -56,9 +58,22 @@
     <bpmn:serviceTask id="Activity_1ghwdwp" name="Authorization" camunda:class="com.example.code.deligators.LoginDeligator">
       <bpmn:incoming>Flow_1vwosdg</bpmn:incoming>
       <bpmn:outgoing>Flow_0qmblqb</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_15gi5tw">
+        <bpmn:targetRef>DataStoreReference_1hh4dst</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
+    <bpmn:dataStoreReference id="DataStoreReference_1hh4dst" name="postgres" />
+    <bpmn:endEvent id="Event_11g64ak" name="Auth was failed">
+      <bpmn:incoming>Flow_0c0oycw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_0wiujh3" name="Auth error" attachedToRef="Activity_1ghwdwp">
+      <bpmn:outgoing>Flow_0c0oycw</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_15qkkks" errorRef="Error_0fx9xqs" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0c0oycw" sourceRef="Event_0wiujh3" targetRef="Event_11g64ak" />
   </bpmn:process>
   <bpmn:error id="Error_1ki0svg" name="USER_ALREADY_EXIST" errorCode="406" camunda:errorMessage="User already exist" />
+  <bpmn:error id="Error_0fx9xqs" name="AUTH_ERROR" errorCode="404" camunda:errorMessage="User not found" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1u790k6">
       <bpmndi:BPMNShape id="Participant_0fz2ghc_di" bpmnElement="Participant_0fz2ghc" isHorizontal="true">
@@ -107,13 +122,31 @@
         <dc:Bounds x="840" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1hh4dst_di" bpmnElement="DataStoreReference_1hh4dst">
+        <dc:Bounds x="1005" y="125" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1009" y="182" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11g64ak_di" bpmnElement="Event_11g64ak">
+        <dc:Bounds x="742" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="723" y="113" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wiujh3_di" bpmnElement="Event_0wiujh3">
+        <dc:Bounds x="822" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="815" y="243" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1umr2pu_di" bpmnElement="Flow_1umr2pu">
         <di:waypoint x="258" y="200" />
         <di:waypoint x="315" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vwosdg_di" bpmnElement="Flow_1vwosdg">
-        <di:waypoint x="860" y="420" />
-        <di:waypoint x="860" y="240" />
+        <di:waypoint x="890" y="420" />
+        <di:waypoint x="890" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qmblqb_di" bpmnElement="Flow_0qmblqb">
         <di:waypoint x="940" y="200" />
@@ -145,6 +178,15 @@
         <di:waypoint x="705" y="200" />
         <di:waypoint x="705" y="460" />
         <di:waypoint x="810" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c0oycw_di" bpmnElement="Flow_0c0oycw">
+        <di:waypoint x="822" y="220" />
+        <di:waypoint x="760" y="220" />
+        <di:waypoint x="760" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_15gi5tw_di" bpmnElement="DataOutputAssociation_15gi5tw">
+        <di:waypoint x="940" y="181" />
+        <di:waypoint x="1005" y="157" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

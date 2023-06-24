@@ -8,7 +8,10 @@
         "columns": null
       },
       "id": "Field_02tecox",
-      "key": "username"
+      "key": "username",
+      "validate": {
+        "required": true
+      }
     },
     {
       "label": "Password",
@@ -18,7 +21,10 @@
         "columns": null
       },
       "id": "Field_0oq3bun",
-      "key": "password"
+      "key": "password",
+      "validate": {
+        "required": true
+      }
     },
     {
       "label": "Email",
@@ -28,7 +34,10 @@
         "columns": null
       },
       "id": "Field_1d1hpb4",
-      "key": "email"
+      "key": "email",
+      "validate": {
+        "required": true
+      }
     },
     {
       "values": [
@@ -48,7 +57,10 @@
         "columns": null
       },
       "id": "Field_1chxfuy",
-      "key": "role"
+      "key": "role",
+      "validate": {
+        "required": true
+      }
     },
     {
       "action": "submit",
