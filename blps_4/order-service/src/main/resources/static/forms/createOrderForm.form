@@ -1,0 +1,65 @@
+{
+  "components": [
+    {
+      "label": "BookId",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0de409x",
+        "columns": null
+      },
+      "id": "Field_0wcpfrq",
+      "key": "book_id",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Amount",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1kzpans",
+        "columns": null
+      },
+      "id": "Field_1gji4e8",
+      "key": "amount",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Day",
+      "type": "number",
+      "layout": {
+        "row": "Row_19wnpmt",
+        "columns": null
+      },
+      "id": "Field_1dg53ja",
+      "key": "day",
+      "validate": {
+        "required": true,
+        "min": 1,
+        "max": 31
+      }
+    },
+    {
+      "action": "submit",
+      "label": "Create",
+      "type": "button",
+      "layout": {
+        "row": "Row_111ekr3",
+        "columns": null
+      },
+      "id": "Field_0d5nk5a",
+      "key": "field_13f85bt"
+    }
+  ],
+  "type": "default",
+  "id": "CreateOrderForm",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "schemaVersion": 9
+}

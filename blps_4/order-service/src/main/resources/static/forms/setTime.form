@@ -1,0 +1,66 @@
+{
+  "components": [
+    {
+      "label": "Order Number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0z5tbhl",
+        "columns": null
+      },
+      "id": "Field_0anwrl2",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "label": "Start",
+      "type": "number",
+      "layout": {
+        "row": "Row_1huaz1a",
+        "columns": null
+      },
+      "id": "Field_1rbgy9z",
+      "key": "start",
+      "readonly": false,
+      "validate": {
+        "required": true,
+        "min": 0,
+        "max": 23
+      }
+    },
+    {
+      "label": "End",
+      "type": "number",
+      "layout": {
+        "row": "Row_1huaz1a",
+        "columns": null
+      },
+      "id": "Field_1ji9psd",
+      "key": "end",
+      "validate": {
+        "required": true,
+        "min": 0,
+        "max": 23
+      }
+    },
+    {
+      "action": "submit",
+      "label": "Set time",
+      "type": "button",
+      "layout": {
+        "row": "Row_16oykbu",
+        "columns": null
+      },
+      "id": "Field_0eg1f7t",
+      "key": "field_1xdp2p4"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1hfw4yt",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.19.0",
+  "schemaVersion": 9
+}

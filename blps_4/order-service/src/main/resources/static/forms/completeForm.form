@@ -1,0 +1,82 @@
+{
+  "components": [
+    {
+      "label": "Order id",
+      "type": "number",
+      "layout": {
+        "row": "Row_1b71q5e",
+        "columns": null
+      },
+      "id": "Field_0meur07",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "label": "Day",
+      "type": "number",
+      "layout": {
+        "row": "Row_1eedenk",
+        "columns": null
+      },
+      "id": "Field_0blnict",
+      "key": "day",
+      "disabled": true
+    },
+    {
+      "label": "Start",
+      "type": "number",
+      "layout": {
+        "row": "Row_0uyr1oy",
+        "columns": null
+      },
+      "id": "Field_14qbuwj",
+      "key": "start",
+      "disabled": true
+    },
+    {
+      "label": "End",
+      "type": "number",
+      "layout": {
+        "row": "Row_0uyr1oy",
+        "columns": null
+      },
+      "id": "Field_0755g5k",
+      "key": "end",
+      "disabled": true
+    },
+    {
+      "values": [
+        {
+          "label": "COMPLETE",
+          "value": "COMPLETE"
+        },
+        {
+          "label": "CANCEL",
+          "value": "CANCEL"
+        }
+      ],
+      "label": "Complete / cancel",
+      "type": "select",
+      "layout": {
+        "row": "Row_0y230rc",
+        "columns": null
+      },
+      "id": "Field_0c1e2am",
+      "key": "complete",
+      "disabled": false,
+      "readonly": false,
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_1c3j1jv",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "schemaVersion": 9
+}

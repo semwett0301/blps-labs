@@ -1,0 +1,86 @@
+{
+  "components": [
+    {
+      "label": "Username",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_139scrn",
+        "columns": null
+      },
+      "id": "Field_02tecox",
+      "key": "username",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Password",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_02bb9q3",
+        "columns": null
+      },
+      "id": "Field_0oq3bun",
+      "key": "password",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Email",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0pgohw7",
+        "columns": null
+      },
+      "id": "Field_1d1hpb4",
+      "key": "email",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "USER",
+          "value": "USER"
+        },
+        {
+          "label": "COURIER",
+          "value": "COURIER"
+        }
+      ],
+      "label": "Role",
+      "type": "select",
+      "layout": {
+        "row": "Row_1rgmgh4",
+        "columns": null
+      },
+      "id": "Field_1chxfuy",
+      "key": "role",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "action": "submit",
+      "label": "Register",
+      "type": "button",
+      "layout": {
+        "row": "Row_1sab4vd",
+        "columns": null
+      },
+      "id": "Field_0tr32o7",
+      "key": "field_0spioe5"
+    }
+  ],
+  "type": "default",
+  "id": "RegisterForm",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.12.0"
+  },
+  "schemaVersion": 9
+}
