@@ -110,3 +110,4 @@ Domain exceptions: `OrderNotFoundException`, `BookIsNotAvailableException`, `Tim
 - Producer: `order-service` (`config/KafkaConfiguration`, `DeliveryServiceLitRes#sendOrder`).
 - Consumer: `mail-service` (`NotificationServiceMail#sendNotification`).
 - Periodic digest: `NotificationServiceMail#broadcast` runs on schedule.
+
