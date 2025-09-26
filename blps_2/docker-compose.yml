@@ -1,0 +1,11 @@
+  services:
+    db:
+      image: postgres:latest
+      container_name: blps_2_db
+      environment:
+        POSTGRES_DB: blps_2_db
+        POSTGRES_USER: sem_wet
+        POSTGRES_PASSWORD: 6yeqVEzv
+      ports:
+        - "5432:5432"
+      restart: "always"
